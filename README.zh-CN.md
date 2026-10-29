@@ -1,6 +1,6 @@
 # CoLayout
 
-[English](README.md) · [安装与准备](docs/zh/setup.md) · [使用说明](docs/zh/usage.md) · [软件架构](docs/architecture.md)
+**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [软件使用说明](docs/zh/usage.md)
 
 CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 Cadence Virtuoso 配合使用。人划分本地操作区，版图 Agent 通过本机 HTTP API 编辑被分配的区域；工作区、权限、撤销、检查和显式同步都由 Windows APP 统一管理。
 
@@ -13,9 +13,9 @@ CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 
 
 ## 开始使用
 
-准备 Windows、Git、[uv](https://docs.astral.sh/uv/getting-started/installation/)，以及可通过 SSH 访问、已安装合法 EDA 软件的 Linux 服务器。初始化 Agent 可以协助安装和诊断，但需要你提供服务器地址及必要的连接信息。
+准备 Windows、Git、[uv（官方英文安装说明）](https://docs.astral.sh/uv/getting-started/installation/)，以及可通过 SSH 访问、已安装合法 EDA 软件的 Linux 服务器。初始化 Agent 可以协助安装和诊断，但需要你提供服务器地址及必要的连接信息。
 
-1. 拉取仓库，让初始化 Agent 阅读 [AGENTS.md](AGENTS.md)。
+1. 拉取仓库，让初始化 Agent 阅读 [AGENTS.md（供初始化 Agent 阅读，英文）](AGENTS.md)。
 2. 执行 `powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1`。
 3. 按[安装说明](docs/zh/setup.md)配置、检查服务器连接并启动 APP。地址缺失、SSH 认证失败或存在多个 Virtuoso 窗口时，应先明确处理。
 4. 使用项目级 `colayout-pdk` skill 采集已保存的 Layout 样例。Agent 提交提案，人在 APP 中审核并启用。
@@ -40,8 +40,12 @@ CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 
 
 ## 开发与许可
 
-维护者从[架构](docs/architecture.md)、[开发说明](docs/development.md)、[API](docs/api.md)和[贡献指南](CONTRIBUTING.md)开始。文档同时面向人和协助开发的 Agent。
+维护者从[架构](docs/zh/architecture.md)、[开发说明](docs/zh/development.md)、[API](docs/zh/api.md)和[贡献指南](docs/zh/contributing.md)开始。文档同时面向人和协助开发的 Agent。
 
-CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [LICENSE](LICENSE) 和[第三方声明](THIRD_PARTY_NOTICES.md)。不分发私人版图、工艺文件、凭据或开发对话。
+CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [MIT 许可证原文（英文）](LICENSE) 和[第三方声明](docs/zh/licensing.md)。不分发私人版图、工艺文件、凭据或开发对话。
 
-特别感谢 **[Arcadia-1 及贡献者开发的 Virtuoso Bridge Lite](https://github.com/Arcadia-1/virtuoso-bridge-lite)**。CoLayout 通过它连接 Virtuoso。安装固定到明确的上游提交，保留一个有说明的 Windows 兼容补丁，不随上游更新而自动升级。详见[依赖来源](dependencies/README.md)。
+特别感谢 **[Arcadia-1 及贡献者开发的 Virtuoso Bridge Lite](https://github.com/Arcadia-1/virtuoso-bridge-lite)**。CoLayout 通过它连接 Virtuoso。安装固定到明确的上游提交，保留一个有说明的 Windows 兼容补丁，不随上游更新而自动升级。详见[依赖来源](docs/zh/dependencies.md)。
+
+---
+
+[中文文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [English](README.md)

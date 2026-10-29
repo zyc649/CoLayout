@@ -1,6 +1,6 @@
 # Setup and preparation
 
-[中文](../zh/setup.md) · [Home](../../README.md)
+[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/setup.md)
 
 ## What the user prepares
 
@@ -100,3 +100,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 Verify the live workspace archive folder matches the new client's workspaces folder. Then open a new conversation with only that folder's permissions, read its AGENTS.md, and supply the intended operation-region ID.
 
 Folder restrictions are enforced by your agent host. The generated files are not an OS sandbox. Do not grant the layout conversation this source checkout, Bridge tools or server credentials.
+
+---
+
+[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/setup.md)

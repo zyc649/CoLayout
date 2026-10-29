@@ -1,6 +1,6 @@
 # 安装与初始化
 
-[English](../en/setup.md) · [首页](../../README.zh-CN.md)
+[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/setup.md)
 
 ## 人需要准备的内容
 
@@ -27,7 +27,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 
 两个 CoLayout skill 已随仓库放在 .agents/skills 下。安装脚本建立 .venv，安装固定版本依赖，下载并校验固定提交的 Bridge，应用有说明的 Windows 兼容补丁，再安装其上游 Virtuoso skill。依赖安装阶段不操作服务器上的版图。
 
-缺少 uv 时，按[官方安装说明](https://docs.astral.sh/uv/getting-started/installation/)安装，初始化 Agent 可在授权范围内协助。Python 3.13 由 uv 选择。
+缺少 uv 时，按[官方安装说明（英文）](https://docs.astral.sh/uv/getting-started/installation/)安装，初始化 Agent 可在授权范围内协助。Python 3.13 由 uv 选择。
 
 Bridge 下载按 dependencies/bridge-lock.json 校验。离线准备了同一归档时，可以传 setup.ps1 -BridgeArchive；仍需哈希一致，不能为绕过错误随意换成最新分支。
 
@@ -100,3 +100,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 确认 APP 返回的存档目录是新文件夹下的 workspaces，再新开一个只授权该文件夹的版图对话，让它阅读 AGENTS.md，并给出操作区 ID 和任务。
 
 目录权限由 Agent 宿主工具执行；生成的说明和客户端不是操作系统沙箱。不要给版图对话源码目录、Bridge 或服务器凭据。
+
+---
+
+[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/setup.md)

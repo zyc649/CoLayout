@@ -1,6 +1,6 @@
 # CoLayout
 
-[简体中文](README.zh-CN.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md) · [Architecture](docs/architecture.md)
+**English** | [简体中文](README.zh-CN.md) · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)
 
 CoLayout is a lightweight Windows layout workspace for human–agent collaboration with Cadence Virtuoso. Humans organize a design into local operation regions; layout agents edit their assigned regions through a loopback HTTP API. The Windows application owns the workspace, permissions, undo history, checks and explicit native synchronization.
 
@@ -15,7 +15,7 @@ CoLayout is a complementary layout tool, not a replacement for foundry sign-off 
 
 Prepare a Windows machine, Git, [uv](https://docs.astral.sh/uv/getting-started/installation/), an SSH-accessible Linux server with your licensed EDA tools, and a saved Layout sample. Your setup agent can help install prerequisites and diagnose missing host details, SSH authentication or multiple Virtuoso windows.
 
-1. Clone this repository and ask your setup agent to follow [AGENTS.md](AGENTS.md).
+1. Clone this repository and ask your setup agent to follow [AGENTS.md (Agent instructions)](AGENTS.md).
 2. Run `powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1`.
 3. Configure and check the server connection, then start the APP as described in [Setup](docs/en/setup.md).
 4. Use the project skill `colayout-pdk` to collect the sample and submit a proposal. Review and enable it in the APP.
@@ -40,8 +40,12 @@ Provide the actual DRC deck, stream map and tool/environment paths. Do not subst
 
 ## Development and licensing
 
-Start with [Architecture](docs/architecture.md), [Development](docs/development.md), [API](docs/api.md) and [Contributing](CONTRIBUTING.md).
+Start with [Architecture](docs/en/architecture.md), [Development](docs/en/development.md), [API](docs/en/api.md) and [Contributing](docs/en/contributing.md).
 
-Original CoLayout code is MIT-licensed. Dependencies retain their own licenses; see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). No PDKs, private layouts, credentials or development transcripts are distributed.
+Original CoLayout code is MIT-licensed. Dependencies retain their own licenses; see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](docs/en/licensing.md). No PDKs, private layouts, credentials or development transcripts are distributed.
 
-CoLayout relies on **[Virtuoso Bridge Lite by Arcadia-1 and its contributors](https://github.com/Arcadia-1/virtuoso-bridge-lite)** for communication with Virtuoso. We gratefully acknowledge their work. Installation uses a fixed upstream commit and a small documented Windows compatibility patch; it does not silently follow upstream updates. See [dependency provenance](dependencies/README.md).
+CoLayout relies on **[Virtuoso Bridge Lite by Arcadia-1 and its contributors](https://github.com/Arcadia-1/virtuoso-bridge-lite)** for communication with Virtuoso. We gratefully acknowledge their work. Installation uses a fixed upstream commit and a small documented Windows compatibility patch; it does not silently follow upstream updates. See [dependency provenance](docs/en/dependencies.md).
+
+---
+
+[Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [简体中文](README.zh-CN.md)

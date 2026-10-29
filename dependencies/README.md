@@ -1,27 +1,10 @@
-# Dependency provenance
+# 依赖来源 / Dependency provenance
 
-CoLayout gratefully acknowledges [Virtuoso Bridge Lite](https://github.com/Arcadia-1/virtuoso-bridge-lite), created by Arcadia-1 and its contributors. It provides the native communication foundation. CoLayout's shared workspace, UI, domain checks and Agent API are maintained separately.
+[中文首页](../README.zh-CN.md) · [English home](../README.md)
 
-## Bridge
+请选择阅读语言。 / Choose a language.
 
-- Repository: https://github.com/Arcadia-1/virtuoso-bridge-lite
-- Pinned commit: 93be53e17da95913e1b252ceaf6e367050f2dc51 (package 0.8.0)
-- Archive URL and SHA-256: bridge-lock.json
-- Original MIT attribution: [preserved license](../LICENSES/virtuoso-bridge-lite-MIT.txt)
-- Local modification: patches/windows-pid-probe.patch, Windows process liveness probing only.
+- [简体中文：依赖来源](../docs/zh/dependencies.md)
+- [English: Dependency provenance](../docs/en/dependencies.md)
 
-On Windows, os.kill(pid, 0) is not a safe Unix-style existence probe. The patch uses a read-only process query/GetExitCodeProcess path; the POSIX path is unchanged. It changes no wire protocol or Virtuoso operation. The patch contains upstream context and remains covered by the upstream MIT notice.
-
-setup.ps1 downloads the exact archive into ignored .colayout/dependencies, verifies its SHA-256, safely extracts it, applies the patch and checks before/after file hashes. It installs from that source and copies the upstream Virtuoso skill, with attribution, to the ignored project skill directory. The complete dependency source remains locally available. --BridgeArchive supports the identical archive offline.
-
-The Git repository does not vendor the complete dependency or silently update it. A dependency outage produces a diagnosis; never fall back to an unverified main branch or another package with the same name.
-
-## Updating
-
-In a separate checkout, choose a reviewed upstream commit, compare the used APIs and patch, record the new official archive hash, verify the exact source before/after hashes, reinstall cleanly and run public regressions plus authorized native integration. Update the lock, notices and version pins together. Keep recovery compatibility and never upgrade a live shared Bridge session implicitly.
-
-## Other packages
-
-requirements-locked.txt lists exact runtime and development versions. The source install uses PySide6_Essentials, not unused Addons. [Third-party notices](../THIRD_PARTY_NOTICES.md) and the installed-package license inventory document the terms.
-
-This is a source distribution. Binary installers, wheels bundled with third-party libraries, and appliances require their own complete corresponding-source/license/relinking review. Do not infer binary redistribution compliance from the application MIT license.
+[中文文档目录](../docs/zh/index.md) · [English documentation](../docs/en/index.md)

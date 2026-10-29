@@ -1,6 +1,6 @@
 # Using CoLayout
 
-[中文](../zh/usage.md) · [Setup](setup.md)
+[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/usage.md)
 
 ## The workspace
 
@@ -58,3 +58,7 @@ For an unknown request outcome, preserve the original request ID/body and pendin
 | Esc | Cancel the current interaction |
 
 Shortcuts are configurable in the UI. Text fields keep text-editing behavior. Panel buttons toggle their corresponding panels; auto-routing is available through View rather than the main toolbar.
+
+---
+
+[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/usage.md)

@@ -1,6 +1,6 @@
 # 软件使用说明
 
-[English](../en/usage.md) · [安装](setup.md)
+[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/usage.md)
 
 ## 工作区
 
@@ -58,3 +58,7 @@ Agent 的 workspace save 生成独立快照；load 与人端打开存档的语�
 | Esc | 取消当前交互 |
 
 快捷键可在人端设置，输入框内仍保留文字编辑行为。面板按钮用于开关对应面板；自动布线入口位于“视图”菜单。
+
+---
+
+[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/usage.md)

@@ -1,6 +1,6 @@
 # CoLayout setup and development
 
-This is the source/maintenance conversation. Read README.md (or README.zh-CN.md), docs/architecture.md and docs/development.md. The separate layout conversation uses only its generated client folder and public APP API.
+This is the source/maintenance conversation. Read README.md (or README.zh-CN.md), docs/en/architecture.md and docs/en/development.md (or the corresponding docs/zh pages). The separate layout conversation uses only its generated client folder and public APP API.
 
 ## First setup, in order
 
@@ -23,6 +23,6 @@ If the user supplies a prepared process package, follow the documented import/re
 - Native work uses the installed upstream Virtuoso skill and verified APIs/documentation. Do not restart or kill a user's Virtuoso to resolve routine setup.
 - Use .venv Python 3.13. Changes to transactions, geometry or permissions need behavior tests; UI changes need Qt interaction and pythonw validation. Use QEventLoop for background tests.
 - Before release, run the supported regression suite, source/privacy audit and a clean-install check. Do not claim a native/PDK check that was only mocked or performed on synthetic data.
-- Keep current human and agent documentation aligned with the live API. Read CONTRIBUTING.md, SECURITY.md and THIRD_PARTY_NOTICES.md before changing distribution boundaries.
+- Keep current human and agent documentation aligned with the live API. Read docs/en/contributing.md, docs/en/security.md and docs/en/licensing.md before changing distribution boundaries.
 
 This guide supports both human maintainers and coding agents. It does not grant a layout-only agent access to the repository or server.

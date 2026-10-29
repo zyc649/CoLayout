@@ -19,6 +19,8 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           .\.venv\Scripts\python.exe -m tools.build_customer_api_kit --check
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe tools/check_docs.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
           .\.venv\Scripts\python.exe tools/audit_release.py
           exit $LASTEXITCODE
       - name: Synthetic regression
