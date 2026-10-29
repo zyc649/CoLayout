@@ -1,0 +1,16 @@
+{
+  "name": "virtuoso-bridge",
+  "version": "0.8.0",
+  "repository": "https://github.com/Arcadia-1/virtuoso-bridge-lite",
+  "commit": "93be53e17da95913e1b252ceaf6e367050f2dc51",
+  "url": "https://codeload.github.com/Arcadia-1/virtuoso-bridge-lite/zip/93be53e17da95913e1b252ceaf6e367050f2dc51",
+  "sha256": "9022f02d8fb2eef03ca1215e03b1ecf949123ba3adfc574efdc07029658ba849",
+  "patches": [
+    {
+      "file": "src/virtuoso_bridge/transport/tunnel.py",
+      "patch": "dependencies/patches/windows-pid-probe.patch",
+      "before_sha256": "543880c4a29d9eeb285346fac01367f37eba8e35c9fd2487468179db6288e415",
+      "after_sha256": "959de07322bdb3d3e180bc96f1e3ef6bb83c1912eb29f9a6e58a1b76262c9aaf"
+    }
+  ]
+}

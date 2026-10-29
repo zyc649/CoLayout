@@ -1,0 +1,3742 @@
+[
+  {
+    "name": "process_configuration",
+    "description": "独立工艺配置：requirements 获取配置包 schema、采集清单和本机连接；list/get/status 读取配置与提案；submit 提交统一配置待人审核；export 返回可分享的配置 JSON。无需占用操作区。仅 UI 可以批准、验证并启用，API 没有 approve。双排保护环和开放路径必须来自用户样例。包不携带连接凭据；实际版图不受提交影响。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "default": "requirements",
+          "enum": [
+            "requirements",
+            "list",
+            "get",
+            "submit",
+            "status",
+            "export"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "proposal_id": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Proposal Id"
+        },
+        "technology_key": {
+          "anyOf": [
+            {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Technology Key"
+        },
+        "package": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package"
+        },
+        "sample": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sample"
+        },
+        "connection_id": {
+          "anyOf": [
+            {
+              "maxLength": 24,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Connection Id"
+        },
+        "project_root": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Project Root"
+        },
+        "verification_id": {
+          "anyOf": [
+            {
+              "maxLength": 32,
+              "minLength": 32,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Verification Id"
+        }
+      },
+      "title": "ProcessConfigurationArgs",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {},
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。"
+    }
+  },
+  {
+    "name": "workspace",
+    "description": "整工作区文件：status/list 无需接入；save 保存独立存档而不切换当前文件；load 从已允许目录读取 .colayout.json，先备份当前文档，再打开工作副本。加载要求所有区域空闲、后台任务结束且没有未决原生事务。不会自动同步 Virtuoso。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "default": "status",
+          "enum": [
+            "status",
+            "save",
+            "list",
+            "load"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "expected_document_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Document Id"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Revision"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "maxLength": 100,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "maxLength": 4000,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "WorkspaceFile",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "save": [
+          "expected_document_id",
+          "expected_revision; saves a new immutable archive without changing the active file; allowed while agents work"
+        ],
+        "load": [
+          "expected_document_id",
+          "expected_revision",
+          "path under advertised import_roots",
+          "all leases released; no active jobs or unresolved native transaction; opens a fresh working copy and first archives the current workspace"
+        ],
+        "status": [
+          "no lease required; returns configured file roots and current document version"
+        ],
+        "list": [
+          "managed archives only; paginated with offset/limit"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。"
+    }
+  },
+  {
+    "name": "reference_cases",
+    "description": "查询人添加的本地案例库，读取原理图/版图快照或预览；只读，无需区域接入。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "action": {
+          "default": "list",
+          "enum": [
+            "list",
+            "read",
+            "preview"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "case_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Case Id"
+        },
+        "kind": {
+          "default": "summary",
+          "enum": [
+            "summary",
+            "schematic",
+            "layout"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "query": {
+          "default": "",
+          "maxLength": 200,
+          "title": "Query",
+          "type": "string"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "Reference",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "read": [
+          "case_id"
+        ],
+        "preview": [
+          "case_id"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。"
+    }
+  },
+  {
+    "name": "server_drc_region",
+    "description": "异步服务器 Calibre 全规则 DRC，可独立启动用于排查，不要求本地先通过。推荐经常先跑本地检查；完成仍需当前全区两类证据。默认整个已接入操作区，可给区内 bounds_um，但局部结果不能用于完成。仅直接子操作区与原生嵌套模块内部为黑盒；普通器件正常检查。start 必须给 expected_revision。UI、API 和完成验收统一使用人端工艺过滤设置；原始报告保留。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "action": {
+          "default": "start",
+          "enum": [
+            "start",
+            "status",
+            "cancel"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Revision"
+        },
+        "bounds_um": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounds Um"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "exclude_categories": {
+          "description": "兼容旧客户端：空列表等价 include_waived=true；非空值不授予额外豁免。过滤和验收仅使用人端工艺设置。",
+          "items": {
+            "enum": [
+              "border",
+              "density",
+              "seal_ring"
+            ],
+            "type": "string"
+          },
+          "maxItems": 3,
+          "title": "Exclude Categories",
+          "type": "array"
+        },
+        "include_waived": {
+          "default": false,
+          "description": "显示已过滤项及依据；只改变列表，不改变 passed 或完成验收。",
+          "title": "Include Waived",
+          "type": "boolean"
+        },
+        "offset": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "result_limit": {
+          "anyOf": [
+            {
+              "maximum": 1000000,
+              "minimum": 1000,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "可选：本次每条规则及 APP 保留标记的上限；报告截断时显式提高后重新 start，不改变工艺规则。",
+          "title": "Result Limit"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "ServerDrc",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "start": [
+          "expected_revision"
+        ],
+        "status": [
+          "job_id"
+        ],
+        "cancel": [
+          "job_id"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "report_filter": "人端工艺 report_policy 是唯一过滤和服务器验收依据；规则 ID 精确匹配，关键词匹配规则 ID 与正文，忽略大小写/连续空白。返回 report_policy_digest、原始/有效/抑制计数及 suppressed_by_rule/reason。include_waived=true 查看已过滤项及依据，不改变 passed。旧 exclude_categories=[] 等价显示全部，其他旧类别参数不授予豁免。",
+      "policy_changes": "状态查询及 release(done) 按当前人端设置重新审阅仍有效的原始结果；无需因仅过滤变化重跑服务器。幂等重放保留原响应，重新查询使用新的 status 请求。失效几何、失败、截断、覆盖不足及非全区结果仍不能用于完成；本地检查不应用服务器过滤。",
+      "prerequisite": "可独立启动，无本地先通过门禁；仍需有效接入、expected_revision 和当前区域无运行中的任务。启动/执行成功不等于通过或完成。verification 分别显示当前全区本地与服务器结果，两项均通过才能完成。",
+      "execution_failures": "state=failed 是任务执行失败，不是 DRC 违规；没有 passed 结论。error.details 包含 stage/execution_stage、drc_completed、result_available、native_job_id/public_job_id 及 next_action；null 表示未知。文件访问只有限重试，不自动重复远端检查。",
+      "mim_via_check": "本地检查按人端 drc.mim_capacitor 配置：独立标准过孔（含组合中的每一级）的实际切孔与配置的 MIM 图形重叠，且连接所选上下金属时，报 MIM_VIA_BLOCKED，阻断完成。不检查原生 PCell 内部孔；不改普通连通/高亮。inspect rules 可读配置状态；未配置不是不支持，不得自行猜层或增加豁免。",
+      "verification_workflow": "频繁本地检查 > 阶段性服务器检查，推荐先本地；服务器可独立启动。release(done) 要求当前全区本地与服务器均通过。本地只检查已支持项目；不支持的宽度计算跳过且不生成逐项记录。本地实际错误/Poly/PIN 问题、几何缺失、执行失败、截断、局部或过期结果仍阻断完成。区域结果不是整芯片或 LVS 签核。"
+    }
+  },
+  {
+    "name": "claim_region",
+    "description": "凭人或父 Agent 分配的操作区 ID 独占当前层；父子可分别接入，只列出本层直属子区，不进入更深层。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "region_id": {
+          "maxLength": 200,
+          "minLength": 1,
+          "title": "Region Id",
+          "type": "string"
+        },
+        "agent_name": {
+          "maxLength": 80,
+          "minLength": 1,
+          "title": "Agent Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "region_id",
+        "agent_name"
+      ],
+      "title": "Claim",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {},
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。"
+    }
+  },
+  {
+    "name": "inspect_region",
+    "description": "读取本层对象、Layout PIN/网络、工艺规则或仅供布局参考的原理图缓存。坐标为工作区绝对 µm。",
+    "input_schema": {
+      "$defs": {
+        "CaptureTarget": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "net",
+                "pin",
+                "object",
+                "component"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "id": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "Id",
+              "type": "string"
+            },
+            "query_ref": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Query Ref"
+            },
+            "point_um": {
+              "anyOf": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Point Um"
+            },
+            "layer": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Layer"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "title": "CaptureTarget",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "markup_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markup Id"
+        },
+        "padding_um": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Padding Um",
+          "type": "number"
+        },
+        "clip_to_region": {
+          "default": false,
+          "title": "Clip To Region",
+          "type": "boolean"
+        },
+        "kind": {
+          "default": "layout",
+          "enum": [
+            "layout",
+            "net",
+            "rules",
+            "reference",
+            "terminals"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "net": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Net"
+        },
+        "detail": {
+          "default": "full",
+          "enum": [
+            "full",
+            "summary"
+          ],
+          "title": "Detail",
+          "type": "string"
+        },
+        "uids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 256,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Uids"
+        },
+        "pin_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 256,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pin Ids"
+        },
+        "bounds_um": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounds Um"
+        },
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 128,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layers"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CaptureTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "include_members": {
+          "default": false,
+          "title": "Include Members",
+          "type": "boolean"
+        },
+        "parameter_names": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 128,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "reference only; [] omits CDF parameters while preserving terminal/binding data.",
+          "title": "Parameter Names"
+        },
+        "instance_name": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instance Name"
+        },
+        "terminal": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Terminal"
+        },
+        "name_source": {
+          "default": "layout",
+          "enum": [
+            "layout",
+            "schematic"
+          ],
+          "title": "Name Source",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Inspect",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {},
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "read_execution": "HTTP 截图/net 后台读取快照，调用方式不变，不新增 job_id/status。source_revision 为输入版本；current=true 表示首次完成时本层依赖有效，按 request_id 重放仍是原响应。READ_SNAPSHOT_STALE/READ_QUEUE_FULL/READ_TIMEOUT 可用新请求重新读取；传输超时或 OUTCOME_UNKNOWN 仍用原 request_id 对账，勿重发编辑。",
+      "guidance_box": {
+        "markup_id": "当前层定位框 ID；与 bounds_um/target 互斥",
+        "padding_um": "非负有限工作区 µm；默认 0",
+        "clip_to_region": "默认 false，越界拒绝；true 显式裁到接入区。location 返回原框/请求/实际范围、版本与 clipped。capture 同时返回该版本的 context 布局摘要。"
+      },
+      "terminal_lookup": {
+        "kind": "terminals",
+        "instance_name": "精确原生名称",
+        "terminal": "可选端子或原生成员名",
+        "name_source": "layout（默认，重名返回全部候选并标 ambiguous）或 schematic（顶层名列出本层全部展开成员；也可用 reference 返回的 qualified_name 查询具体层次实例）",
+        "evidence": "contact_state 区分缺几何、unsupported_access、unattached、partial、attached 和 shorted；attached 仅为本层端口接触，不是跨区接缝或 LVS 结论。"
+      },
+      "reference_query": {
+        "summary": {
+          "kind": "reference",
+          "detail": "summary"
+        },
+        "parameters": "parameter_names 可显式选择原生有效参数；[] 省略参数但保留端子和绑定。默认摘要用工艺的 schematic_summary_parameters。未配置时候选为 w/l/fw/fingers/nf/m/r/c，只返回实际存在字段，值和单位不推算，阻容值不代表并联合计。",
+        "uids": "可选本层 Layout UID 列表，返回对应原理图实例及原生绑定。",
+        "hierarchy": "读取深度跟随原生 Layout binding。实例以 reference_path（含成员/行/列）唯一定位；qualified_name 便于阅读；reference_nets 记录可确认的原理图跨层端口连接，不是 Layout 网络或物理导通证据。",
+        "array_members": "reference_nets_status=aggregate_only 表示未采集逐成员原理图映射，reference_nets 为空；terminals.net 只保留整个实例的原生聚合表达式。不可把它当作每个成员的网络，实际布线使用 Layout PIN。",
+        "full": {
+          "kind": "reference",
+          "detail": "full"
+        }
+      },
+      "deferred_interfaces": "建区可先补原理图要求的本地边界 PIN。layout.deferred_interfaces 列出尚缺原生 PIN/保护环接入的网络；只有标记或同名金属不代表完成。实体端子的未知状态仍通过 terminals 查询。",
+      "native_routing_windows": {
+        "query": "layout 返回当前层直属原生黑盒的豁免区，可用对象 UID 或豁免区 ID 筛选。",
+        "auto_escape": "edit_region: create_native_pin_escapes，uid=直属原生黑盒 UID，params={width_um}。每个内部端子/金属层取最近的水平或垂直出口；只画豁免区，不画导线，不访问黑盒内部；重复调用复用已有覆盖。",
+        "create": "edit_region: create_native_routing_window，uid=原生模块 UID，params={bounds_um,layers,name?,note?,enabled?}",
+        "update": "set_native_routing_window，uid=豁免区 ID，可修改 bounds_um/layers/name/note/enabled；delete_native_routing_window 删除。",
+        "semantics": "只豁免所属 Virtuoso 模块覆盖范围内的指定金属层；其他模块、独立禁布区和未选层不受影响。随原生对象位姿移动，内部继续黑盒，不开放原生内部编辑。"
+      },
+      "query_options": {
+        "layout": "bounds_um=[xmin,ymin,xmax,ymax] 工作区绝对 µm、layers=[M1,V1,M2] 可任选；与 detail/uids/pin_ids 取交集。实际几何与闭矩形相交，包含穿框长线和边界接触，无 DRC halo。",
+        "whole_objects": "返回完整原对象和完整 PIN，绝不生成可编辑的裁剪片段；query_match 指明匹配层。过孔切孔及两侧金属均参与筛选。原生/子模块外框与定位框是图层无关上下文。",
+        "net_members": "include_members=true 展开全区或所选网的分量成员；target 或 bounds_um/layers 也会触发展开。默认普通 net 查询保持简洁。",
+        "target": "net 查询支持 target={kind:component,id:c3,query_ref:当前引用}，或 {kind:object,id:UID}，或对象加 point_um+layer，以及 {kind:pin,id:PIN-ID}。net 和 target 不可同时给。",
+        "component_scope": "物理图始终覆盖整个接入区；bounds_um/layers 只筛成员，不重新切分分量。components[].nets/pin_ids/bounds_um 保留全分量事实，members_filtered 标记成员列表被筛选。",
+        "ambiguity": "对象/接口有多个分量时 selection.ambiguous=true，不自动合并；用对象层点或当前分量引用定位。unassigned 不猜网络，shorted 保留多个目标网。"
+      },
+      "native_width": {
+        "perpendicular": "shape_dbu.width / dbu_per_micron 为垂直于走线方向的物理线宽（µm）。",
+        "oa_diagonal": "45° PathSeg 使用 OA 对角表达：物理线宽 = shape_dbu.width / dbu_per_micron / sqrt(2)，不能只除 DBU。",
+        "quantization": "编辑 width 始终是物理 µm。45° PathSeg 先乘 sqrt(2)，以 lcm(grid,2) DBU 四舍五入（half-up）；物理宽度误差不超过该步长/(2*sqrt(2)*dbu_per_micron)。45° Path 仍为 perpendicular。"
+      }
+    }
+  },
+  {
+    "name": "edit_region",
+    "description": "原子编辑本层几何和直接子区框/接口/策略，或撤销自己的无冲突编辑；expected_revision 必填，无关区域编辑不使已读取版本失效。8–64 项直属对象/原生豁免批量操作在后台校验，返回 job_id；用 status 查询，完成且 edit_applied=true 才表示已采用。不得另换 request_id 重发。",
+    "input_schema": {
+      "$defs": {
+        "Operation": {
+          "additionalProperties": false,
+          "properties": {
+            "action": {
+              "title": "Action",
+              "type": "string"
+            },
+            "uid": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Uid"
+            },
+            "params": {
+              "additionalProperties": true,
+              "title": "Params",
+              "type": "object"
+            }
+          },
+          "required": [
+            "action"
+          ],
+          "title": "Operation",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Revision"
+        },
+        "mode": {
+          "default": "apply",
+          "enum": [
+            "apply",
+            "undo",
+            "status",
+            "cancel"
+          ],
+          "title": "Mode",
+          "type": "string"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "operations": {
+          "items": {
+            "$ref": "#/$defs/Operation"
+          },
+          "maxItems": 64,
+          "title": "Operations",
+          "type": "array"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Edit",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "apply": [
+          "expected_revision",
+          "nonempty operations"
+        ],
+        "undo": [
+          "expected_revision",
+          "operations must be empty"
+        ],
+        "status": [
+          "job_id"
+        ],
+        "cancel": [
+          "job_id"
+        ],
+        "slow_helpers": [
+          "create_guard/create_multilayer_path must be alone; up to 32 create_auto_vias operations may form one atomic batch; queued/running means edit_applied=false; completed result confirms adoption"
+        ],
+        "large_local_batches": [
+          "8–64 direct-object or native-routing-window operations run as an atomic background job; use the same edit_region status/cancel protocol; queued/running is not applied; inspect completed result.edit_applied before continuing or undoing; never resubmit the original edit with a new request_id"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "actions": {
+        "copy": {
+          "title": "复制 · 外部图形",
+          "uid": "required; direct object only",
+          "required_params": [
+            "dx",
+            "dy"
+          ],
+          "params": {
+            "dx": "µm；相对 X 位移。",
+            "dy": "µm；相对 Y 位移。",
+            "orientation": "R0/R90/R180/R270/MX/MY/MXR90/MYR90。",
+            "pivot": "[x,y]，工作区绝对 µm 旋转/镜像中心；省略为 instance/via 原点、rect 左下角、路径/多边形首点。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_guard": {
+          "uid": "omitted",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "template_id": {
+                "minLength": 1,
+                "title": "Template Id",
+                "type": "string"
+              },
+              "net_intent": {
+                "minLength": 1,
+                "title": "Net Intent",
+                "type": "string"
+              },
+              "bounds_um": {
+                "anyOf": [
+                  {
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Bounds Um"
+              },
+              "points_um": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "maxItems": 2,
+                      "minItems": 2,
+                      "prefixItems": [
+                        {
+                          "type": "number"
+                        },
+                        {
+                          "type": "number"
+                        }
+                      ],
+                      "type": "array"
+                    },
+                    "maxItems": 512,
+                    "minItems": 2,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Open 90-degree main-path vertices in workspace absolute micrometres. Mutually exclusive with bounds_um and uids.",
+                "title": "Points Um"
+              },
+              "uids": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 512,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Uids"
+              },
+              "clearance": {
+                "anyOf": [
+                  {
+                    "minimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Clearance"
+              }
+            },
+            "required": [
+              "template_id",
+              "net_intent"
+            ],
+            "title": "Guard",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true,
+          "geometry": "Exactly one of bounds_um (rectangular main path), uids (enclose direct objects), or points_um (open horizontal/vertical main path). All UI native templates and validated recipes are discoverable in inspect_region(kind=rules).guard_templates.",
+          "execution": "Submit alone; native private-preview job with status/cancel. Actual generated outer material must fit the claimed region and existing routing policy. No source-cell write or weakened source/dependency checks."
+        },
+        "create_path45": {
+          "title": "创建 · 45°/90° 折线 Path",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "lpp",
+            "points"
+          ],
+          "params": {
+            "begin_extension": "µm；自定义起点延伸。",
+            "end_extension": "µm；自定义终点延伸。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。",
+            "style": "Path 端头：truncateExtend/extendExtend/roundRound/varExtendExtend。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_path90": {
+          "title": "创建 · 90° 折线 Path",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "lpp",
+            "points"
+          ],
+          "params": {
+            "begin_extension": "µm；自定义起点延伸。",
+            "end_extension": "µm；自定义终点延伸。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。",
+            "style": "Path 端头：truncateExtend/extendExtend/roundRound/varExtendExtend。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_pathseg45": {
+          "title": "创建 · 45°/90° 单段 PathSeg",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "lpp",
+            "points"
+          ],
+          "params": {
+            "begin_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "begin_extension": "µm；自定义起点延伸。",
+            "begin_style": "PathSeg 起点：truncate/extend/variable/chamfer/custom。",
+            "end_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "end_extension": "µm；自定义终点延伸。",
+            "end_style": "PathSeg 终点：truncate/extend/variable/chamfer/custom。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "恰好两个端点 [[x1,y1],[x2,y2]]，工作区绝对 µm；90 为正交，45 可为 45°/90°单段。多段请用 create_path90/45。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_pathseg90": {
+          "title": "创建 · 90° 单段 PathSeg",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "lpp",
+            "points"
+          ],
+          "params": {
+            "begin_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "begin_extension": "µm；自定义起点延伸。",
+            "begin_style": "PathSeg 起点：truncate/extend/variable/chamfer/custom。",
+            "end_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "end_extension": "µm；自定义终点延伸。",
+            "end_style": "PathSeg 终点：truncate/extend/variable/chamfer/custom。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "恰好两个端点 [[x1,y1],[x2,y2]]，工作区绝对 µm；90 为正交，45 可为 45°/90°单段。多段请用 create_path90/45。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_polygon": {
+          "title": "创建 · 多边形",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "lpp",
+            "points"
+          ],
+          "params": {
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_rect": {
+          "title": "创建 · 矩形",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "height",
+            "lpp",
+            "width",
+            "x",
+            "y"
+          ],
+          "params": {
+            "height": "µm；矩形高度。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。",
+            "x": "µm；绝对 X。rect 是左下角，instance/via 是原生放置原点。",
+            "y": "µm；绝对 Y。rect 是左下角，instance/via 是原生放置原点。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "create_via": {
+          "title": "创建 · 标准过孔",
+          "uid": "omitted; APP assigns ID",
+          "required_params": [
+            "definition",
+            "x",
+            "y"
+          ],
+          "params": {
+            "definition": "rules.via_definitions 中现有标准过孔定义名。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "orientation": "R0/R90/R180/R270/MX/MY/MXR90/MYR90。",
+            "via_parameters": "过孔覆盖参数字典：长度及长度二元数组输入 µm，cutRows/cutColumns 为无量纲整数；可用字段见 via_parameter_units。",
+            "x": "µm；绝对 X。rect 是左下角，instance/via 是原生放置原点。",
+            "y": "µm；绝对 Y。rect 是左下角，instance/via 是原生放置原点。"
+          },
+          "kinds": [],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "delete": {
+          "title": "删除 · 当前对象",
+          "uid": "required; direct object only",
+          "required_params": [],
+          "params": {},
+          "kinds": [
+            "mpp",
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_path45": {
+          "title": "线 · 修改走势（45°/90°）",
+          "uid": "required; direct object only",
+          "required_params": [
+            "points",
+            "width"
+          ],
+          "params": {
+            "begin_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "begin_extension": "µm；自定义起点延伸。",
+            "begin_style": "PathSeg 起点：truncate/extend/variable/chamfer/custom。",
+            "end_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "end_extension": "µm；自定义终点延伸。",
+            "end_style": "PathSeg 终点：truncate/extend/variable/chamfer/custom。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。 编辑 PathSeg 必须恰好两个端点；Path 可有多个顶点。",
+            "style": "Path 端头：truncateExtend/extendExtend/roundRound/varExtendExtend。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_path90": {
+          "title": "线 · 修改走势（仅90°）",
+          "uid": "required; direct object only",
+          "required_params": [
+            "points",
+            "width"
+          ],
+          "params": {
+            "begin_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "begin_extension": "µm；自定义起点延伸。",
+            "begin_style": "PathSeg 起点：truncate/extend/variable/chamfer/custom。",
+            "end_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "end_extension": "µm；自定义终点延伸。",
+            "end_style": "PathSeg 终点：truncate/extend/variable/chamfer/custom。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。 编辑 PathSeg 必须恰好两个端点；Path 可有多个顶点。",
+            "style": "Path 端头：truncateExtend/extendExtend/roundRound/varExtendExtend。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_path_ends": {
+          "title": "线 · 端头与延伸量",
+          "uid": "required; direct object only",
+          "required_params": [],
+          "params": {
+            "begin_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "begin_extension": "µm；自定义起点延伸。",
+            "begin_style": "PathSeg 起点：truncate/extend/variable/chamfer/custom。",
+            "end_custom": "{left_diagonal,right_diagonal,right_half_width}；三项物理长度均输入 µm。",
+            "end_extension": "µm；自定义终点延伸。",
+            "end_style": "PathSeg 终点：truncate/extend/variable/chamfer/custom。",
+            "style": "Path 端头：truncateExtend/extendExtend/roundRound/varExtendExtend。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_polygon": {
+          "title": "多边形 · 顶点/图层",
+          "uid": "required; direct object only",
+          "required_params": [
+            "points"
+          ],
+          "params": {
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "points": "[[x,y], ...]；工作区绝对 µm 顶点，90 动作只接受正交，45 动作接受 45°/90°。"
+          },
+          "kinds": [
+            "polygon"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_rect": {
+          "title": "矩形 · 位置/尺寸/图层",
+          "uid": "required; direct object only",
+          "required_params": [
+            "height",
+            "width",
+            "x",
+            "y"
+          ],
+          "params": {
+            "height": "µm；矩形高度。",
+            "lpp": "[layer,purpose]，例如 [\"M1\",\"drawing\"]；必须在 writable_lpps 内。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。",
+            "x": "µm；绝对 X。rect 是左下角，instance/via 是原生放置原点。",
+            "y": "µm；绝对 Y。rect 是左下角，instance/via 是原生放置原点。"
+          },
+          "kinds": [
+            "rect"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "edit_via": {
+          "title": "过孔 · 位置/阵列/定义/偏移",
+          "uid": "required; direct object only",
+          "required_params": [],
+          "params": {
+            "definition": "rules.via_definitions 中现有标准过孔定义名。",
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。",
+            "orientation": "R0/R90/R180/R270/MX/MY/MXR90/MYR90。",
+            "via_parameters": "过孔覆盖参数字典：长度及长度二元数组输入 µm，cutRows/cutColumns 为无量纲整数；可用字段见 via_parameter_units。",
+            "x": "µm；绝对 X。rect 是左下角，instance/via 是原生放置原点。",
+            "y": "µm；绝对 Y。rect 是左下角，instance/via 是原生放置原点。"
+          },
+          "kinds": [
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "mirror": {
+          "title": "变换 · 镜像",
+          "uid": "required; direct object only",
+          "required_params": [
+            "axis"
+          ],
+          "params": {
+            "axis": "X 或 Y（大写）；镜像轴。",
+            "pivot": "[x,y]，工作区绝对 µm 旋转/镜像中心；省略为 instance/via 原点、rect 左下角、路径/多边形首点。"
+          },
+          "kinds": [
+            "inst",
+            "mpp",
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "move": {
+          "title": "变换 · 相对移动",
+          "uid": "required; direct object only",
+          "required_params": [
+            "dx",
+            "dy"
+          ],
+          "params": {
+            "dx": "µm；相对 X 位移。",
+            "dy": "µm；相对 Y 位移。"
+          },
+          "kinds": [
+            "inst",
+            "mpp",
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "place_instance": {
+          "title": "变换 · 实例绝对位置/方向",
+          "uid": "required; direct object only",
+          "required_params": [
+            "x",
+            "y"
+          ],
+          "params": {
+            "orientation": "R0/R90/R180/R270/MX/MY/MXR90/MYR90。",
+            "x": "µm；绝对 X。rect 是左下角，instance/via 是原生放置原点。",
+            "y": "µm；绝对 Y。rect 是左下角，instance/via 是原生放置原点。"
+          },
+          "kinds": [
+            "inst"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "reset_via": {
+          "title": "过孔 · 参数恢复工艺默认",
+          "uid": "required; direct object only",
+          "required_params": [
+            "names"
+          ],
+          "params": {
+            "names": "要恢复为工艺默认值的过孔参数名称列表。"
+          },
+          "kinds": [
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "rotate": {
+          "title": "变换 · 相对旋转",
+          "uid": "required; direct object only",
+          "required_params": [],
+          "params": {
+            "degrees": "仅接受整数 -90、90、180、270；相对旋转，省略为 90°。不接受 0、360 或 -180。",
+            "pivot": "[x,y]，工作区绝对 µm 旋转/镜像中心；省略为 instance/via 原点、rect 左下角、路径/多边形首点。"
+          },
+          "kinds": [
+            "inst",
+            "mpp",
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "set_net_intent": {
+          "title": "标注 · 网络意图",
+          "uid": "required; direct object only",
+          "required_params": [
+            "net_intent"
+          ],
+          "params": {
+            "net_intent": "连接组身份或 null；只是编辑意图，不证明物理连接。使用 inspect 的 net，不按 signal 合并伪并联组。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg",
+            "polygon",
+            "rect",
+            "stdVia"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "set_width": {
+          "title": "线 · 修改物理线宽",
+          "uid": "required; direct object only",
+          "required_params": [
+            "width"
+          ],
+          "params": {
+            "width": "µm；物理线宽或矩形宽度。仅路径创建可省略，采用当前图层默认值；显式值正常校验。"
+          },
+          "kinds": [
+            "path",
+            "pathSeg"
+          ],
+          "units": "lengths in workspace µm; counts dimensionless"
+        },
+        "transform": {
+          "uid": "omitted",
+          "required_params": [
+            "uids"
+          ],
+          "params": {
+            "uids": "本层对象/直接子模块 UID 列表。",
+            "delta": "[dx,dy] µm；默认 [0,0]。",
+            "orientation": "默认 R0；以整体实际边界中心作变换，中心及 delta 按工艺 grid 取整（Python round，正负半格 ties-to-even）。公开 PIN 随模块整体变换，未选中外部线路不自动跟随。"
+          }
+        },
+        "create_bus": {
+          "uid": "omitted",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "lpp": {
+                "maxItems": 2,
+                "minItems": 2,
+                "prefixItems": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ],
+                "title": "Lpp",
+                "type": "array"
+              },
+              "x": {
+                "title": "X",
+                "type": "number"
+              },
+              "y": {
+                "title": "Y",
+                "type": "number"
+              },
+              "length": {
+                "exclusiveMinimum": 0,
+                "title": "Length",
+                "type": "number"
+              },
+              "count": {
+                "maximum": 256,
+                "minimum": 1,
+                "title": "Count",
+                "type": "integer"
+              },
+              "spacing": {
+                "minimum": 0,
+                "title": "Spacing",
+                "type": "number"
+              },
+              "width": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "direction": {
+                "default": "horizontal",
+                "enum": [
+                  "horizontal",
+                  "vertical"
+                ],
+                "title": "Direction",
+                "type": "string"
+              },
+              "net_intent": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Net Intent"
+              },
+              "nets": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Nets"
+              }
+            },
+            "required": [
+              "lpp",
+              "x",
+              "y",
+              "length",
+              "count",
+              "spacing"
+            ],
+            "title": "Bus",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true
+        },
+        "arrange": {
+          "uid": "omitted",
+          "input_schema": {
+            "$defs": {
+              "EmptySlot": {
+                "additionalProperties": false,
+                "properties": {
+                  "width": {
+                    "exclusiveMinimum": 0,
+                    "title": "Width",
+                    "type": "number"
+                  },
+                  "height": {
+                    "exclusiveMinimum": 0,
+                    "title": "Height",
+                    "type": "number"
+                  }
+                },
+                "required": [
+                  "width",
+                  "height"
+                ],
+                "title": "EmptySlot",
+                "type": "object"
+              }
+            },
+            "additionalProperties": false,
+            "properties": {
+              "uids": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "$ref": "#/$defs/EmptySlot"
+                        }
+                      ]
+                    },
+                    "maxItems": 512,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Uids"
+              },
+              "rows": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "items": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "$ref": "#/$defs/EmptySlot"
+                          }
+                        ]
+                      },
+                      "type": "array"
+                    },
+                    "maxItems": 64,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Rows"
+              },
+              "direction": {
+                "default": "horizontal",
+                "enum": [
+                  "horizontal",
+                  "vertical"
+                ],
+                "title": "Direction",
+                "type": "string"
+              },
+              "align": {
+                "default": "center",
+                "enum": [
+                  "top",
+                  "bottom",
+                  "left",
+                  "right",
+                  "center"
+                ],
+                "title": "Align",
+                "type": "string"
+              },
+              "spacing": {
+                "default": 0,
+                "minimum": 0,
+                "title": "Spacing",
+                "type": "number"
+              },
+              "row_spacing": {
+                "default": 0,
+                "minimum": 0,
+                "title": "Row Spacing",
+                "type": "number"
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "X"
+              },
+              "y": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Y"
+              },
+              "orientation": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "R0",
+                      "R90",
+                      "R180",
+                      "R270",
+                      "MX",
+                      "MY",
+                      "MXR90",
+                      "MYR90"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Orientation"
+              }
+            },
+            "title": "Arrange",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true,
+          "kinds": [
+            "inst"
+          ],
+          "unsupported": "Local child regions use transform; these helpers do not accept child-region IDs."
+        },
+        "align": {
+          "uid": "omitted",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "uids": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 512,
+                "minItems": 1,
+                "title": "Uids",
+                "type": "array"
+              },
+              "edge": {
+                "enum": [
+                  "left",
+                  "right",
+                  "top",
+                  "bottom",
+                  "center_x",
+                  "center_y"
+                ],
+                "title": "Edge",
+                "type": "string"
+              },
+              "reference_uid": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Reference Uid"
+              },
+              "coordinate": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Coordinate"
+              }
+            },
+            "required": [
+              "uids",
+              "edge"
+            ],
+            "title": "Align",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true,
+          "kinds": [
+            "inst"
+          ],
+          "unsupported": "Local child regions use transform; these helpers do not accept child-region IDs."
+        },
+        "create_auto_vias": {
+          "uid": "omitted",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              },
+              "start_layer": {
+                "title": "Start Layer",
+                "type": "string"
+              },
+              "end_layer": {
+                "title": "End Layer",
+                "type": "string"
+              },
+              "net_intent": {
+                "minLength": 1,
+                "title": "Net Intent",
+                "type": "string"
+              },
+              "targets": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Targets"
+              },
+              "via_definitions": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 16,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Via Definitions"
+              },
+              "allow_landing": {
+                "default": false,
+                "title": "Allow Landing",
+                "type": "boolean"
+              },
+              "landing_policy": {
+                "default": "fit_target",
+                "enum": [
+                  "fit_target",
+                  "expand_window"
+                ],
+                "title": "Landing Policy",
+                "type": "string"
+              },
+              "landing_reference": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Landing Reference"
+              },
+              "minimum_cuts": {
+                "default": 2,
+                "maximum": 4096,
+                "minimum": 2,
+                "title": "Minimum Cuts",
+                "type": "integer"
+              },
+              "max_cuts": {
+                "default": 4096,
+                "maximum": 4096,
+                "minimum": 2,
+                "title": "Max Cuts",
+                "type": "integer"
+              },
+              "array_direction": {
+                "default": "any",
+                "enum": [
+                  "any",
+                  "horizontal",
+                  "vertical"
+                ],
+                "title": "Array Direction",
+                "type": "string"
+              }
+            },
+            "required": [
+              "bounds_um",
+              "start_layer",
+              "end_layer",
+              "net_intent"
+            ],
+            "title": "AutoVias",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true,
+          "single_row": {
+            "array_direction": "any（原行为）/horizontal（1×N）/vertical（N×1）",
+            "scope": "单窗口、单个标准金属过孔、最多一个阵列；使用原 bounds/landing/target/net/DRC 限制",
+            "maximality": "按孔数降序、全部网格位置搜索；成功才报告 maximal_on_grid。预算耗尽报 SINGLE_ROW_SEARCH_LIMIT 并原子回滚，不返回未经证明的较少孔数。",
+            "existing": "只复用已验证达到容量的同方向单排；其他已有阵列保留并报告需明确处理，不自动删除或扩大窗口。"
+          },
+          "landing_semantics": {
+            "allow_landing_false": "all via enclosure metal must be covered by existing access",
+            "fit_target": "default when landing allowed: prefer one explicit native PIN, otherwise one start-layer target; landing_reference resolves ambiguity. Fill minimum one-cut enclosure width but do not extend reference length to add cuts. Other layers may need enclosure extension for that array.",
+            "expand_window": "explicitly allow dense arrays/landing extension throughout bounds_um",
+            "feedback": "landing_reference/landing_changes identify each original local target and layer; used_landing discloses new metal, not a DRC warning"
+          }
+        },
+        "create_multilayer_path": {
+          "uid": "omitted",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "points": {
+                "items": {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                "maxItems": 64,
+                "minItems": 2,
+                "title": "Points",
+                "type": "array"
+              },
+              "net_intent": {
+                "minLength": 1,
+                "title": "Net Intent",
+                "type": "string"
+              },
+              "layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "One layer per segment: len(layers) == len(points)-1. Omit to use configured horizontal/vertical preferences.",
+                "title": "Layers"
+              },
+              "widths_um": {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "title": "Widths Um",
+                "type": "object"
+              },
+              "bounds_um": {
+                "anyOf": [
+                  {
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Bounds Um"
+              },
+              "landing_size_um": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "description": "Square landing search window side in um; must fit the generated via array (at least two cuts per level). Omit for native-footprint sizing; a 1x1 via size is usually too small.",
+                "title": "Landing Size Um"
+              },
+              "start_layer": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Start Layer"
+              },
+              "end_layer": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "End Layer"
+              },
+              "start_pin_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Start Pin Id"
+              },
+              "end_pin_id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "End Pin Id"
+              }
+            },
+            "required": [
+              "points",
+              "net_intent"
+            ],
+            "title": "MultilayerPath",
+            "type": "object"
+          },
+          "units": "workspace absolute µm; spacing is edge-to-edge; count is dimensionless",
+          "atomic": true,
+          "layers_semantics": "每段一个层名：len(layers)=len(points)-1。省略才使用已配置的水平/竖直首选层。",
+          "via_policy": "使用原生标准金属孔的固定尺寸并检查已配置的本地规则；缺少某个规则项不等于过孔不存在，已知尺寸/包围错误仍拒绝。原子生成仍核对完整连通、网络冲突、区域范围和本地 DRC。",
+          "landing": "每级至少两切孔（或工艺偏好要求的更多孔）；landing_size_um 是整个方形搜索窗口边长，不是单孔尺寸。建议省略以按原生尺寸自动选取；空间不足、接错网或 DRC 失败仍整次回滚。"
+        },
+        "create_native_pin_escapes": {
+          "uid": "required; direct native blackbox instance",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "width_um": {
+                "description": "Requested corridor width in µm, rounded outward to the manufacturing grid; PIN metal layers are preserved.",
+                "exclusiveMinimum": 0,
+                "title": "Width Um",
+                "type": "number"
+              }
+            },
+            "required": [
+              "width_um"
+            ],
+            "title": "PinEscapes",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "create_native_routing_window": {
+          "uid": "required; direct native blackbox instance",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              },
+              "layers": {
+                "items": {
+                  "type": "string"
+                },
+                "maxItems": 128,
+                "minItems": 1,
+                "title": "Layers",
+                "type": "array"
+              },
+              "name": {
+                "default": "布线豁免",
+                "maxLength": 200,
+                "minLength": 1,
+                "title": "Name",
+                "type": "string"
+              },
+              "note": {
+                "default": "",
+                "maxLength": 20000,
+                "title": "Note",
+                "type": "string"
+              },
+              "enabled": {
+                "default": true,
+                "title": "Enabled",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "bounds_um",
+              "layers"
+            ],
+            "title": "CreateNativeWindow",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_native_routing_window": {
+          "uid": "required; routing window ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "anyOf": [
+                  {
+                    "maxItems": 4,
+                    "minItems": 4,
+                    "prefixItems": [
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      },
+                      {
+                        "type": "number"
+                      }
+                    ],
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Bounds Um"
+              },
+              "layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "maxItems": 128,
+                    "minItems": 1,
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Layers"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "maxLength": 20000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Note"
+              },
+              "enabled": {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Enabled"
+              }
+            },
+            "title": "SetNativeWindow",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "delete_native_routing_window": {
+          "uid": "required; routing window ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "Empty",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_native_blocked_layers": {
+          "uid": "required; direct native blackbox instance",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "layers": {
+                "items": {
+                  "type": "string"
+                },
+                "title": "Layers",
+                "type": "array"
+              }
+            },
+            "required": [
+              "layers"
+            ],
+            "title": "NativePolicy",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "create_child_region": {
+          "uid": "omitted; APP assigns ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              },
+              "name": {
+                "default": "",
+                "maxLength": 200,
+                "title": "Name",
+                "type": "string"
+              },
+              "note": {
+                "default": "",
+                "maxLength": 20000,
+                "title": "Note",
+                "type": "string"
+              },
+              "pin_mode": {
+                "default": "fixed",
+                "enum": [
+                  "fixed",
+                  "directional"
+                ],
+                "title": "Pin Mode",
+                "type": "string"
+              },
+              "blocked_layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Blocked Layers"
+              }
+            },
+            "required": [
+              "bounds_um"
+            ],
+            "title": "CreateRegion",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_child_region": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "maxLength": 20000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Note"
+              },
+              "pin_mode": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "fixed",
+                      "directional"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Pin Mode"
+              },
+              "blocked_layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Blocked Layers"
+              }
+            },
+            "title": "RegionProperties",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "resize_child_region": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              }
+            },
+            "required": [
+              "bounds_um"
+            ],
+            "title": "Bounds",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "tighten_child_region": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "padding_um": {
+                "default": 0,
+                "description": "Content margin in µm; only shrinks, never expands the existing frame.",
+                "minimum": 0,
+                "title": "Padding Um",
+                "type": "number"
+              }
+            },
+            "title": "Tighten",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_child_pin": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "pin_id": {
+                "title": "Pin Id",
+                "type": "string"
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "X"
+              },
+              "y": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Y"
+              },
+              "layer": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Layer"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "width": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "height": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Height"
+              }
+            },
+            "required": [
+              "pin_id"
+            ],
+            "title": "PinProperties",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "copy_child_pin": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "pin_id": {
+                "title": "Pin Id",
+                "type": "string"
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "X"
+              },
+              "y": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Y"
+              }
+            },
+            "required": [
+              "pin_id"
+            ],
+            "title": "CopyPin",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "dissolve_child_region": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "Empty",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "create_keepout": {
+          "uid": "omitted; APP assigns ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              },
+              "layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Layers"
+              },
+              "note": {
+                "default": "",
+                "title": "Note",
+                "type": "string"
+              }
+            },
+            "required": [
+              "bounds_um"
+            ],
+            "title": "Keepout",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "resize_keepout": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              }
+            },
+            "required": [
+              "bounds_um"
+            ],
+            "title": "Bounds",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_keepout": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Layers"
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Note"
+              }
+            },
+            "title": "KeepoutProperties",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "delete_keepout": {
+          "uid": "required; direct child region or current-level keepout",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {},
+            "title": "Empty",
+            "type": "object"
+          },
+          "scope": "current level only; child internals opaque"
+        },
+        "set_region": {
+          "uid": "omitted or current region ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "note": {
+                "anyOf": [
+                  {
+                    "maxLength": 20000,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Note"
+              },
+              "pin_mode": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "fixed",
+                      "directional"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Pin Mode"
+              },
+              "blocked_layers": {
+                "anyOf": [
+                  {
+                    "items": {
+                      "type": "string"
+                    },
+                    "type": "array"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Blocked Layers"
+              }
+            },
+            "title": "RegionProperties",
+            "type": "object"
+          },
+          "scope": "assigned region frame/interfaces"
+        },
+        "resize_region": {
+          "uid": "omitted or current region ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "bounds_um": {
+                "maxItems": 4,
+                "minItems": 4,
+                "prefixItems": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "number"
+                  }
+                ],
+                "title": "Bounds Um",
+                "type": "array"
+              }
+            },
+            "required": [
+              "bounds_um"
+            ],
+            "title": "Bounds",
+            "type": "object"
+          },
+          "scope": "assigned region frame/interfaces"
+        },
+        "tighten_region": {
+          "uid": "omitted or current region ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "padding_um": {
+                "default": 0,
+                "description": "Content margin in µm; only shrinks, never expands the existing frame.",
+                "minimum": 0,
+                "title": "Padding Um",
+                "type": "number"
+              }
+            },
+            "title": "Tighten",
+            "type": "object"
+          },
+          "scope": "assigned region frame/interfaces"
+        },
+        "set_region_pin": {
+          "uid": "omitted or current region ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "pin_id": {
+                "title": "Pin Id",
+                "type": "string"
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "X"
+              },
+              "y": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Y"
+              },
+              "layer": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Layer"
+              },
+              "name": {
+                "anyOf": [
+                  {
+                    "maxLength": 200,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Name"
+              },
+              "width": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Width"
+              },
+              "height": {
+                "anyOf": [
+                  {
+                    "exclusiveMinimum": 0,
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Height"
+              }
+            },
+            "required": [
+              "pin_id"
+            ],
+            "title": "PinProperties",
+            "type": "object"
+          },
+          "scope": "assigned region frame/interfaces"
+        },
+        "copy_region_pin": {
+          "uid": "omitted or current region ID",
+          "input_schema": {
+            "additionalProperties": false,
+            "properties": {
+              "pin_id": {
+                "title": "Pin Id",
+                "type": "string"
+              },
+              "x": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "X"
+              },
+              "y": {
+                "anyOf": [
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Y"
+              }
+            },
+            "required": [
+              "pin_id"
+            ],
+            "title": "CopyPin",
+            "type": "object"
+          },
+          "scope": "assigned region frame/interfaces"
+        }
+      },
+      "via_parameter_units": {
+        "cutColumns": "integer count",
+        "cutRows": "integer count",
+        "cutHeight": "µm",
+        "cutWidth": "µm",
+        "cutSpacing": "[µm, µm]",
+        "imp1Enc": "[µm, µm]",
+        "imp2Enc": "[µm, µm]",
+        "layer1Enc": "[µm, µm]",
+        "layer1Offset": "[µm, µm]",
+        "layer2Enc": "[µm, µm]",
+        "layer2Offset": "[µm, µm]",
+        "originOffset": "[µm, µm]"
+      }
+    }
+  },
+  {
+    "name": "route_region",
+    "description": "为本区域生成本地布线候选、查询、重检、采用或丢弃。模拟部分不建议使用内置自动布线，数字部分可以考虑。采用后仍须本地及服务器 DRC。generate/recheck/apply 必须给 expected_revision。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "action": {
+          "default": "generate",
+          "enum": [
+            "generate",
+            "status",
+            "recheck",
+            "apply",
+            "discard"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Revision"
+        },
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 16,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layers"
+        },
+        "algorithms": {
+          "items": {
+            "enum": [
+              "builtin.astar",
+              "builtin.pattern",
+              "builtin.fanout",
+              "builtin.reorder"
+            ],
+            "type": "string"
+          },
+          "maxItems": 4,
+          "minItems": 1,
+          "title": "Algorithms",
+          "type": "array"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "candidate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Route",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "generate": [
+          "expected_revision"
+        ],
+        "status": [
+          "job_id"
+        ],
+        "discard": [
+          "job_id"
+        ],
+        "recheck": [
+          "expected_revision",
+          "job_id",
+          "candidate_id"
+        ],
+        "apply": [
+          "expected_revision",
+          "job_id",
+          "candidate_id"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "size_limit": "最多 64 个当前层器件/直接子模块；超出返回 ROUTING_REGION_TOO_LARGE，可分区或使用显式路径动作。模拟部分不建议内置自动布线。"
+    }
+  },
+  {
+    "name": "check_region",
+    "description": "显式异步检查 Layout 连通性、本地 DRC、设计警告及跨器件 Poly 接触补丁。包括非阻断的器件内部金属误接风险提醒，不代表 LVS 结论。建议频繁运行，频率高于服务器 DRC。本地 passed 仅表示连通性和支持的检查项通过；不支持的宽度计算直接跳过，不生成逐项记录。服务器 DRC 独立检查。默认整个接入区，可用 bounds_um 指定局部范围；局部结果不能用于完成。start 必须给 expected_revision。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "action": {
+          "default": "start",
+          "enum": [
+            "start",
+            "status"
+          ],
+          "title": "Action",
+          "type": "string"
+        },
+        "expected_revision": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Expected Revision"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "bounds_um": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounds Um"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Check",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "start": [
+          "expected_revision"
+        ],
+        "status": [
+          "job_id"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "mim_via_check": "本地检查按人端 drc.mim_capacitor 配置：独立标准过孔（含组合中的每一级）的实际切孔与配置的 MIM 图形重叠，且连接所选上下金属时，报 MIM_VIA_BLOCKED，阻断完成。不检查原生 PCell 内部孔；不改普通连通/高亮。inspect rules 可读配置状态；未配置不是不支持，不得自行猜层或增加豁免。",
+      "verification_workflow": "频繁本地检查 > 阶段性服务器检查，推荐先本地；服务器可独立启动。release(done) 要求当前全区本地与服务器均通过。本地只检查已支持项目；不支持的宽度计算跳过且不生成逐项记录。本地实际错误/Poly/PIN 问题、几何缺失、执行失败、截断、局部或过期结果仍阻断完成。区域结果不是整芯片或 LVS 签核。",
+      "internal_metal_contact": "design.internal_metal_contact 是非阻断设计 warning：本层独立金属接触普通叶器件内部、未与公开 PIN 通过原生同层金属连通的部分。按线/器件/层合并并标出实际接触；合法原生 PIN 同层延伸不报，不展开层次黑盒。检查位置并避免误接；不提取内部电路，不代表 LVS 结论，无须为该提醒添加 waiver。",
+      "native_pin_area": "普通叶 PCell 参与检查。原生 PIN 若暴露金属面积不足，可能在未布线时触发 area 错误；可用同层合法连接补足后复查，不修改只读 PIN，不自动豁免，也不把此类错误一律降为 warning。"
+    }
+  },
+  {
+    "name": "capture_region",
+    "description": "返回本区域的 PNG 截图和坐标范围；可查看本区域当前布线候选，不改变人的视图。",
+    "input_schema": {
+      "$defs": {
+        "CaptureTarget": {
+          "additionalProperties": false,
+          "properties": {
+            "kind": {
+              "enum": [
+                "net",
+                "pin",
+                "object",
+                "component"
+              ],
+              "title": "Kind",
+              "type": "string"
+            },
+            "id": {
+              "maxLength": 200,
+              "minLength": 1,
+              "title": "Id",
+              "type": "string"
+            },
+            "query_ref": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Query Ref"
+            },
+            "point_um": {
+              "anyOf": [
+                {
+                  "maxItems": 2,
+                  "minItems": 2,
+                  "prefixItems": [
+                    {
+                      "type": "number"
+                    },
+                    {
+                      "type": "number"
+                    }
+                  ],
+                  "type": "array"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Point Um"
+            },
+            "layer": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "default": null,
+              "title": "Layer"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "title": "CaptureTarget",
+          "type": "object"
+        }
+      },
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "markup_id": {
+          "anyOf": [
+            {
+              "maxLength": 200,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Markup Id"
+        },
+        "padding_um": {
+          "default": 0,
+          "minimum": 0,
+          "title": "Padding Um",
+          "type": "number"
+        },
+        "clip_to_region": {
+          "default": false,
+          "title": "Clip To Region",
+          "type": "boolean"
+        },
+        "width": {
+          "default": 2560,
+          "maximum": 4096,
+          "minimum": 320,
+          "title": "Width",
+          "type": "integer"
+        },
+        "height": {
+          "default": 2560,
+          "maximum": 4096,
+          "minimum": 240,
+          "title": "Height",
+          "type": "integer"
+        },
+        "bounds_um": {
+          "anyOf": [
+            {
+              "maxItems": 4,
+              "minItems": 4,
+              "prefixItems": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "number"
+                }
+              ],
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bounds Um"
+        },
+        "job_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Id"
+        },
+        "candidate_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Candidate Id"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CaptureTarget"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "highlight": {
+          "default": "auto",
+          "enum": [
+            "auto",
+            "none",
+            "net",
+            "component"
+          ],
+          "title": "Highlight",
+          "type": "string"
+        },
+        "fit": {
+          "default": "target",
+          "enum": [
+            "region",
+            "target"
+          ],
+          "title": "Fit",
+          "type": "string"
+        },
+        "layers": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "maxItems": 128,
+              "minItems": 1,
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Layers"
+        },
+        "style": {
+          "default": "native",
+          "enum": [
+            "native",
+            "outline"
+          ],
+          "title": "Style",
+          "type": "string"
+        },
+        "pin_names": {
+          "default": true,
+          "title": "Pin Names",
+          "type": "boolean"
+        },
+        "instance_names": {
+          "default": true,
+          "title": "Instance Names",
+          "type": "boolean"
+        },
+        "net_names": {
+          "default": false,
+          "title": "Net Names",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Capture",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {
+        "candidate": [
+          "job_id and candidate_id together; current ready candidate only"
+        ]
+      },
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "read_execution": "HTTP 截图/net 后台读取快照，调用方式不变，不新增 job_id/status。source_revision 为输入版本；current=true 表示首次完成时本层依赖有效，按 request_id 重放仍是原响应。READ_SNAPSHOT_STALE/READ_QUEUE_FULL/READ_TIMEOUT 可用新请求重新读取；传输超时或 OUTCOME_UNKNOWN 仍用原 request_id 对账，勿重发编辑。",
+      "guidance_box": {
+        "markup_id": "当前层定位框 ID；与 bounds_um/target 互斥",
+        "padding_um": "非负有限工作区 µm；默认 0",
+        "clip_to_region": "默认 false，越界拒绝；true 显式裁到接入区。location 返回原框/请求/实际范围、版本与 clipped。capture 同时返回该版本的 context 布局摘要。"
+      },
+      "framing": "细长图通过画面留白和图例换行保持说明可读；bounds_um 不变，真实几何保持纵横比例。geometry_rect_px 是 PNG 内对应 bounds_um 的矩形，可能有非零 x；其余像素不对应额外版图。",
+      "instance_labels": "display.instance_label_counts 给出当前取景可见且已请求实例的总数、显示数和省略数；omitted_instance_labels 含完整 id/name/bounds_um/reason/next。低缩放省略也计入；关闭 instance_names 时不计入。"
+    }
+  },
+  {
+    "name": "release_region",
+    "description": "释放本层占用；done 需当前全区本地检查和服务器 DRC 均 passed=true；本地实际错误、连通问题和检查失败仍阻断完成。没有顺序门禁，两类证据缺一不可。handoff 保留修改并交还，不代表验收通过，可附 note。区域完成不代表整芯片或 LVS 签核。",
+    "input_schema": {
+      "additionalProperties": false,
+      "properties": {
+        "session_token": {
+          "maxLength": 200,
+          "minLength": 16,
+          "title": "Session Token",
+          "type": "string"
+        },
+        "outcome": {
+          "default": "cancelled",
+          "enum": [
+            "done",
+            "cancelled",
+            "handoff"
+          ],
+          "title": "Outcome",
+          "type": "string"
+        },
+        "note": {
+          "default": "",
+          "maxLength": 20000,
+          "title": "Note",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_token"
+      ],
+      "title": "Release",
+      "type": "object"
+    },
+    "usage": {
+      "conditional_required": {},
+      "response_semantics": {
+        "ok": "request executed; does not mean routing/check passed",
+        "revision": "current workspace revision",
+        "state=completed": "calculation finished",
+        "current": "result matches the claimed construction-level content and configuration; unrelated levels may have newer workspace revisions",
+        "passed": "current completed result satisfies this check scope",
+        "historical_result": "stale evidence; cannot authorize completion"
+      },
+      "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "mim_via_check": "本地检查按人端 drc.mim_capacitor 配置：独立标准过孔（含组合中的每一级）的实际切孔与配置的 MIM 图形重叠，且连接所选上下金属时，报 MIM_VIA_BLOCKED，阻断完成。不检查原生 PCell 内部孔；不改普通连通/高亮。inspect rules 可读配置状态；未配置不是不支持，不得自行猜层或增加豁免。",
+      "verification_workflow": "频繁本地检查 > 阶段性服务器检查，推荐先本地；服务器可独立启动。release(done) 要求当前全区本地与服务器均通过。本地只检查已支持项目；不支持的宽度计算跳过且不生成逐项记录。本地实际错误/Poly/PIN 问题、几何缺失、执行失败、截断、局部或过期结果仍阻断完成。区域结果不是整芯片或 LVS 签核。"
+    }
+  }
+]

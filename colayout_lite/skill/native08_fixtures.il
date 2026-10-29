@@ -1,0 +1,13 @@
+; Verification-only physical route containing a diagonal, a via and a 90deg leg.
+procedure(ltN08Fixture(lib cell viaName lpp1 lpp2 seed)
+  let((cv a b v r)
+    cv=ltWritable(lib cell)
+    a=dbCreatePathSeg(cv lpp1 list(-20.0 -20.0) list(0.0 0.0) 2.0 "truncate" "extend")
+    v=dbCreateVia(cv techFindViaDefByName(techGetTechFile(cv) viaName) list(0.0 0.0) "R0" list(list("cutRows" 2) list("cutColumns" 3)))
+    b=dbCreatePathSeg(cv lpp2 list(0.0 0.0) list(20.0 0.0) 2.0 "extend" "truncate")
+    unless(a && b && v error("ROUTE_FIXTURE_FAILED"))
+    r=dbCreateRoute(cv car(cv~>nets) nil "normal") r~>objects=list(a v b)
+    unless(equal(r~>objects list(a v b)) error("ROUTE_FIXTURE_MEMBERS_FAILED"))
+    dbReplaceProp(r "fixtureNote" "string" "preserve this native route property")
+    ltMark(cv seed) dbSave(cv)
+    list(a~>colayoutObjectId v~>colayoutObjectId b~>colayoutObjectId ltRouteKey(r))))

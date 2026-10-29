@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools==80.9.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "colayout-lite"
+version = "0.1.0"
+description = "Local-first layout workspace for Windows and Virtuoso"
+requires-python = ">=3.13,<3.14"
+license = "MIT"
+authors = [{name = "zyc649"}]
+readme = "README.md"
+dependencies = ["pydantic==2.13.5", "PySide6_Essentials==6.11.2", "shapely==2.1.2", "virtuoso-bridge==0.8.0"]
+
+[project.urls]
+Homepage = "https://github.com/zyc649/CoLayout"
+Issues = "https://github.com/zyc649/CoLayout/issues"
+
+[tool.setuptools.packages.find]
+include = ["colayout_lite*"]
+exclude = ["tests_lite*", "tools*", "history*", "colayout_lite.verification*"]
+
+[tool.setuptools.package-data]
+colayout_lite = ["skill/*.il", "assets/compact/*.svg", "assets/branding/*.png", "assets/branding/*.ico", "agent_tools/*.md"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests_lite"]
+pythonpath = ["."]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E9", "F63", "F7", "F811", "F82"]
+
+[tool.ruff.format]
+quote-style = "single"

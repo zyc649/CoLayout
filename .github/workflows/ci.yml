@@ -1,0 +1,37 @@
+name: Windows source checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+      - name: Install pinned source dependencies
+        shell: powershell
+        run: .\setup.ps1
+      - name: Static and source checks
+        shell: powershell
+        run: |
+          .\.venv\Scripts\ruff.exe check colayout_lite tools
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe -m tools.build_customer_api_kit --check
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe tools/audit_release.py
+          exit $LASTEXITCODE
+      - name: Synthetic regression
+        shell: powershell
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          .\.venv\Scripts\python.exe -m pytest tests_lite -q
+          exit $LASTEXITCODE
+      - name: Empty installation and client smoke
+        shell: powershell
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          .\.venv\Scripts\python.exe tools/smoke_onboarding.py --out .colayout/smoke
+          exit $LASTEXITCODE

@@ -1,0 +1,427 @@
+[
+  {
+    "name": "annotated-types",
+    "version": "0.8.0",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/annotated-types/annotated-types",
+      "Source, https://github.com/annotated-types/annotated-types",
+      "Changelog, https://github.com/annotated-types/annotated-types/releases"
+    ],
+    "notices": [
+      "LICENSES/dependencies/annotated-types/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "beautifulsoup4",
+    "version": "4.15.0",
+    "license": "MIT License",
+    "project_urls": [
+      "Download, https://www.crummy.com/software/BeautifulSoup/bs4/download/",
+      "Homepage, https://www.crummy.com/software/BeautifulSoup/bs4/"
+    ],
+    "notices": [
+      "LICENSES/dependencies/beautifulsoup4/licenses/AUTHORS",
+      "LICENSES/dependencies/beautifulsoup4/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "colorama",
+    "version": "0.4.6",
+    "license": null,
+    "project_urls": [
+      "Homepage, https://github.com/tartley/colorama"
+    ],
+    "notices": [
+      "LICENSES/dependencies/colorama/licenses/LICENSE.txt"
+    ]
+  },
+  {
+    "name": "iniconfig",
+    "version": "2.3.0",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/pytest-dev/iniconfig"
+    ],
+    "notices": [
+      "LICENSES/dependencies/iniconfig/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "markdownify",
+    "version": "1.2.3",
+    "license": null,
+    "project_urls": [
+      "Homepage, http://github.com/matthewwithanm/python-markdownify",
+      "Download, http://github.com/matthewwithanm/python-markdownify/tarball/master"
+    ],
+    "notices": [
+      "LICENSES/dependencies/markdownify/LICENSE"
+    ]
+  },
+  {
+    "name": "numpy",
+    "version": "2.5.3",
+    "license": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0",
+    "project_urls": [
+      "homepage, https://numpy.org",
+      "documentation, https://numpy.org/doc/",
+      "source, https://github.com/numpy/numpy",
+      "download, https://pypi.org/project/numpy/#files",
+      "tracker, https://github.com/numpy/numpy/issues",
+      "release notes, https://numpy.org/doc/stable/release"
+    ],
+    "notices": [
+      "LICENSES/dependencies/numpy/licenses/LICENSE.txt",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/include/numpy/libdivide/LICENSE.txt",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/src/common/pythoncapi-compat/COPYING",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/src/highway/LICENSE",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/src/multiarray/dragon4_LICENSE.txt",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/src/npysort/x86-simd-sort/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/_core/src/umath/svml/LICENSE",
+      "LICENSES/dependencies/numpy/licenses/numpy/fft/pocketfft/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/linalg/lapack_lite/LICENSE.txt",
+      "LICENSES/dependencies/numpy/licenses/numpy/ma/LICENSE",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/distributions/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/mt19937/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/pcg64/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/philox/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/sfc64/LICENSE.md",
+      "LICENSES/dependencies/numpy/licenses/numpy/random/src/splitmix64/LICENSE.md"
+    ]
+  },
+  {
+    "name": "packaging",
+    "version": "26.3",
+    "license": "Apache-2.0 OR BSD-2-Clause",
+    "project_urls": [
+      "Documentation, https://packaging.pypa.io/",
+      "Source, https://github.com/pypa/packaging"
+    ],
+    "notices": [
+      "LICENSES/dependencies/packaging/licenses/LICENSE",
+      "LICENSES/dependencies/packaging/licenses/LICENSE.APACHE",
+      "LICENSES/dependencies/packaging/licenses/LICENSE.BSD"
+    ]
+  },
+  {
+    "name": "pluggy",
+    "version": "1.6.0",
+    "license": "MIT",
+    "project_urls": [],
+    "notices": [
+      "LICENSES/dependencies/pluggy/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pydantic",
+    "version": "2.13.5",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/pydantic/pydantic",
+      "Documentation, https://docs.pydantic.dev",
+      "Funding, https://github.com/sponsors/samuelcolvin",
+      "Source, https://github.com/pydantic/pydantic",
+      "Changelog, https://docs.pydantic.dev/latest/changelog/"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pydantic/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pydantic_core",
+    "version": "2.46.5",
+    "license": "MIT",
+    "project_urls": [
+      "Funding, https://github.com/sponsors/samuelcolvin",
+      "Homepage, https://github.com/pydantic",
+      "Source, https://github.com/pydantic/pydantic/tree/main/pydantic-core"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pydantic-core/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "Pygments",
+    "version": "2.21.0",
+    "license": "BSD-2-Clause",
+    "project_urls": [
+      "Homepage, https://pygments.org",
+      "Documentation, https://pygments.org/docs",
+      "Source, https://github.com/pygments/pygments",
+      "Bug Tracker, https://github.com/pygments/pygments/issues",
+      "Changelog, https://github.com/pygments/pygments/blob/master/CHANGES"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pygments/licenses/AUTHORS",
+      "LICENSES/dependencies/pygments/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "PySide6_Essentials",
+    "version": "6.11.2",
+    "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+    "project_urls": [
+      "Homepage, https://pyside.org",
+      "Documentation, https://doc.qt.io/qtforpython",
+      "Repository, https://code.qt.io/cgit/pyside/pyside-setup.git/",
+      "Changelog, https://code.qt.io/cgit/pyside/pyside-setup.git/tree/doc/changelogs",
+      "Tracker, https://qt-project.atlassian.net/browse/PYSIDE"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pyside6-essentials/licenses/LicenseRef-Qt-Commercial.txt"
+    ]
+  },
+  {
+    "name": "pytest",
+    "version": "9.1.1",
+    "license": "MIT",
+    "project_urls": [
+      "Changelog, https://docs.pytest.org/en/stable/changelog.html",
+      "Contact, https://docs.pytest.org/en/stable/contact.html",
+      "Funding, https://docs.pytest.org/en/stable/sponsor.html",
+      "Homepage, https://docs.pytest.org/en/latest/",
+      "Source, https://github.com/pytest-dev/pytest",
+      "Tracker, https://github.com/pytest-dev/pytest/issues"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pytest/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "python-dotenv",
+    "version": "1.2.3",
+    "license": "BSD-3-Clause",
+    "project_urls": [
+      "Source, https://github.com/theskumar/python-dotenv"
+    ],
+    "notices": [
+      "LICENSES/dependencies/python-dotenv/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "PyYAML",
+    "version": "6.0.3",
+    "license": "MIT",
+    "project_urls": [
+      "Bug Tracker, https://github.com/yaml/pyyaml/issues",
+      "CI, https://github.com/yaml/pyyaml/actions",
+      "Documentation, https://pyyaml.org/wiki/PyYAMLDocumentation",
+      "Mailing lists, http://lists.sourceforge.net/lists/listinfo/yaml-core",
+      "Source Code, https://github.com/yaml/pyyaml"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pyyaml/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "shapely",
+    "version": "2.1.2",
+    "license": "BSD 3-Clause",
+    "project_urls": [
+      "Documentation, https://shapely.readthedocs.io/",
+      "Repository, https://github.com/shapely/shapely"
+    ],
+    "notices": [
+      "LICENSES/dependencies/shapely/licenses/LICENSE.txt",
+      "LICENSES/dependencies/shapely/licenses/LICENSE_GEOS",
+      "LICENSES/dependencies/shapely/licenses/LICENSE_win32"
+    ]
+  },
+  {
+    "name": "shiboken6",
+    "version": "6.11.2",
+    "license": "LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only",
+    "project_urls": [
+      "Homepage, https://pyside.org",
+      "Documentation, https://doc.qt.io/qtforpython",
+      "Repository, https://code.qt.io/cgit/pyside/pyside-setup.git/",
+      "Changelog, https://code.qt.io/cgit/pyside/pyside-setup.git/tree/doc/changelogs",
+      "Tracker, https://qt-project.atlassian.net/browse/PYSIDE"
+    ],
+    "notices": [
+      "LICENSES/dependencies/shiboken6/licenses/LicenseRef-Qt-Commercial.txt"
+    ]
+  },
+  {
+    "name": "six",
+    "version": "1.17.0",
+    "license": "MIT",
+    "project_urls": [],
+    "notices": [
+      "LICENSES/dependencies/six/LICENSE"
+    ]
+  },
+  {
+    "name": "soupsieve",
+    "version": "2.9.2",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/facelessuser/soupsieve"
+    ],
+    "notices": [
+      "LICENSES/dependencies/soupsieve/licenses/LICENSE.md"
+    ]
+  },
+  {
+    "name": "typing-inspection",
+    "version": "0.4.4",
+    "license": "MIT",
+    "project_urls": [
+      "Homepage, https://github.com/pydantic/typing-inspection",
+      "Documentation, https://pydantic.github.io/typing-inspection/dev/",
+      "Source, https://github.com/pydantic/typing-inspection",
+      "Changelog, https://github.com/pydantic/typing-inspection/blob/main/HISTORY.md"
+    ],
+    "notices": [
+      "LICENSES/dependencies/typing-inspection/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "typing_extensions",
+    "version": "4.16.0",
+    "license": "PSF-2.0",
+    "project_urls": [
+      "Bug Tracker, https://github.com/python/typing_extensions/issues",
+      "Changes, https://github.com/python/typing_extensions/blob/main/CHANGELOG.md",
+      "Documentation, https://typing-extensions.readthedocs.io/",
+      "Home, https://github.com/python/typing_extensions",
+      "Q & A, https://github.com/python/typing/discussions",
+      "Repository, https://github.com/python/typing_extensions"
+    ],
+    "notices": [
+      "LICENSES/dependencies/typing-extensions/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "paramiko",
+    "version": "5.0.0",
+    "license": "LGPL-2.1",
+    "project_urls": [
+      "Docs, https://docs.paramiko.org",
+      "Source, https://github.com/paramiko/paramiko",
+      "Changelog, https://www.paramiko.org/changelog.html",
+      "CI, https://app.circleci.com/pipelines/github/paramiko/paramiko",
+      "Issues, https://github.com/paramiko/paramiko/issues"
+    ],
+    "notices": [
+      "LICENSES/dependencies/paramiko/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "PySocks",
+    "version": "1.7.1",
+    "license": "BSD",
+    "project_urls": [],
+    "notices": [
+      "LICENSES/dependencies/pysocks/LICENSE"
+    ]
+  },
+  {
+    "name": "bcrypt",
+    "version": "5.0.0",
+    "license": "Apache-2.0",
+    "project_urls": [
+      "homepage, https://github.com/pyca/bcrypt/"
+    ],
+    "notices": [
+      "LICENSES/dependencies/bcrypt/LICENSE"
+    ]
+  },
+  {
+    "name": "cryptography",
+    "version": "50.0.1",
+    "license": "Apache-2.0 OR BSD-3-Clause",
+    "project_urls": [
+      "changelog, https://cryptography.io/en/latest/changelog/",
+      "documentation, https://cryptography.io/",
+      "homepage, https://github.com/pyca/cryptography",
+      "issues, https://github.com/pyca/cryptography/issues",
+      "source, https://github.com/pyca/cryptography/"
+    ],
+    "notices": [
+      "LICENSES/dependencies/cryptography/licenses/LICENSE",
+      "LICENSES/dependencies/cryptography/licenses/LICENSE.APACHE",
+      "LICENSES/dependencies/cryptography/licenses/LICENSE.BSD"
+    ]
+  },
+  {
+    "name": "invoke",
+    "version": "3.0.3",
+    "license": "BSD-2-Clause",
+    "project_urls": [
+      "Docs, https://docs.pyinvoke.org",
+      "Source, https://github.com/pyinvoke/invoke",
+      "Changelog, https://www.pyinvoke.org/changelog.html",
+      "CI, https://app.circleci.com/pipelines/github/pyinvoke/invoke",
+      "Issues, https://github.com/pyinvoke/invoke/issues"
+    ],
+    "notices": [
+      "LICENSES/dependencies/invoke/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "PyNaCl",
+    "version": "1.6.2",
+    "license": "Apache-2.0",
+    "project_urls": [
+      "Homepage, https://github.com/pyca/pynacl",
+      "Bug Tracker, https://github.com/pyca/pynacl/issues",
+      "Documentation, https://pynacl.readthedocs.io"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pynacl/licenses/LICENSE",
+      "LICENSES/dependencies/pynacl/licenses/licenses/LICENSE.libsodium.txt"
+    ]
+  },
+  {
+    "name": "cffi",
+    "version": "2.1.1",
+    "license": "MIT-0",
+    "project_urls": [
+      "Documentation, https://cffi.readthedocs.io/",
+      "Changelog, https://cffi.readthedocs.io/en/latest/whatsnew.html",
+      "Download, https://github.com/python-cffi/cffi/releases",
+      "Contact, https://groups.google.com/forum/#!forum/python-cffi",
+      "Source Code, https://github.com/python-cffi/cffi",
+      "Issue Tracker, https://github.com/python-cffi/cffi/issues"
+    ],
+    "notices": [
+      "LICENSES/dependencies/cffi/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "pycparser",
+    "version": "3.0",
+    "license": "BSD-3-Clause",
+    "project_urls": [
+      "Homepage, https://github.com/eliben/pycparser"
+    ],
+    "notices": [
+      "LICENSES/dependencies/pycparser/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "ruff",
+    "version": "0.16.9",
+    "license": "MIT",
+    "project_urls": [
+      "Changelog, https://github.com/astral-sh/ruff/blob/main/CHANGELOG.md",
+      "Documentation, https://docs.astral.sh/ruff/",
+      "Repository, https://github.com/astral-sh/ruff"
+    ],
+    "notices": [
+      "LICENSES/dependencies/ruff/licenses/LICENSE"
+    ]
+  },
+  {
+    "name": "virtuoso-bridge",
+    "version": "0.8.0",
+    "license": null,
+    "project_urls": [],
+    "notices": [
+      "LICENSES/dependencies/virtuoso-bridge/licenses/LICENSE"
+    ]
+  }
+]

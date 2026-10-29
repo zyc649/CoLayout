@@ -1,0 +1,9 @@
+{
+  "schema_version": "colayout-lite-connection-1",
+  "bridge_env": ".env",
+  "allowed_remote_root": "/path/to/your/project",
+  "state_directory": "artifacts/native",
+  "profiles_directory": "config/technologies",
+  "default_library": "",
+  "default_source_cell": ""
+}
