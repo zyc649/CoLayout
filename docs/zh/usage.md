@@ -1,6 +1,6 @@
 # 软件使用说明
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/usage.md)
+**简体中文** | [English](../en/usage.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 ## 工作区
 
@@ -61,4 +61,4 @@ Agent 的 workspace save 生成独立快照；load 与人端打开存档的语�
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/usage.md)
+**简体中文** | [English](../en/usage.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

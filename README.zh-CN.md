@@ -48,4 +48,4 @@ CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [M
 
 ---
 
-[中文文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [English](README.md)
+**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [软件使用说明](docs/zh/usage.md)

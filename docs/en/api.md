@@ -1,6 +1,6 @@
 # Agent API
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/api.md)
+[简体中文](../zh/api.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 The [schema snapshot (JSON)](../../templates/layout-agent/docs/api-schema.json) records argument details. Use live discovery to check the running APP.
 
@@ -66,4 +66,4 @@ http_api marshals calls into the owner thread. session/leases enforce claims and
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/api.md)
+[简体中文](../zh/api.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

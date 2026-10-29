@@ -41,6 +41,11 @@ def check():
         own = {home} | {'docs/'+lang+'/'+name for name in pages[lang]}
         for name in sorted(own):
             counterpart = locales[other] if name == home else 'docs/'+other+'/'+Path(name).name
+            lines = (ROOT/name).read_text(encoding='utf8').strip().splitlines()
+            prefix = (r'^\*\*简体中文\*\* \| \[English\]\([^)]+\) · '
+                      if lang == 'zh' else r'^\[简体中文\]\([^)]+\) \| \*\*English\*\* · ')
+            if not all(re.match(prefix, line) for line in (lines[2], lines[-1])):
+                errors.append(name+': language selector must lead both navigation bars, Chinese then English')
             parsed = links(name)
             graph[name] = set()
             for label, target in parsed:

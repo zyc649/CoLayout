@@ -1,6 +1,6 @@
 # Setup and preparation
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/setup.md)
+[简体中文](../zh/setup.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 ## What the user prepares
 
@@ -103,4 +103,4 @@ Folder restrictions are enforced by your agent host. The generated files are not
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/setup.md)
+[简体中文](../zh/setup.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

@@ -1,6 +1,6 @@
 # 参与开发
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/contributing.md)
+**简体中文** | [English](../en/contributing.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 欢迎人工开发者与编码助手参与 CoLayout。两者遵守相同的架构、测试和评审要求。建议先读[软件架构](architecture.md)和[开发与验证](development.md)。
 
@@ -18,10 +18,10 @@ PR 描述先说明用户遇到的问题，再说明最终实现、验证与限�
 
 ## 文档导航约定
 
-面向读者的文档放在 docs/zh 和 docs/en，同一主题使用相同文件名。每页顶部和底部都能回到同语言的项目首页、文档目录。语言切换指向对应主题，普通正文和导航不跳到另一种语言，也不把完整说明替换成另一语言的摘要。
+面向读者的文档放在 docs/zh 和 docs/en，同一主题使用相同文件名。顶部和底部导航始终先放“简体中文 | English”，再放首页、目录等链接；当前语言加粗。语言切换指向对应主题，普通正文和导航不跳到另一种语言，也不把完整说明替换成另一语言的摘要。
 
 许可证原文、代码、接口 schema、Agent 指令及外部资料可以保留源语言，但链接必须明确标注。已发布页面移动后，旧地址保留双语选择入口。提交文档修改前运行 tools/check_docs.py。
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/contributing.md)
+**简体中文** | [English](../en/contributing.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

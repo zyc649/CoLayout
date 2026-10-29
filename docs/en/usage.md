@@ -1,6 +1,6 @@
 # Using CoLayout
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/usage.md)
+[简体中文](../zh/usage.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 ## The workspace
 
@@ -61,4 +61,4 @@ Shortcuts are configurable in the UI. Text fields keep text-editing behavior. Pa
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/usage.md)
+[简体中文](../zh/usage.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

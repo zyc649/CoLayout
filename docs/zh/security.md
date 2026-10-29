@@ -1,6 +1,6 @@
 # 安全与数据边界
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/security.md)
+**简体中文** | [English](../en/security.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 CoLayout 是可信本机桌面工具。HTTP token 用来验证本机客户端，不是加固的多租户服务。保持服务绑定回环地址，不通过公网代理暴露，也不分享 agent-connection.json。
 
@@ -16,4 +16,4 @@ CoLayout 是可信本机桌面工具。HTTP token 用来验证本机客户端，
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/security.md)
+**简体中文** | [English](../en/security.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

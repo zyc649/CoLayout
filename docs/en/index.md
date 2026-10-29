@@ -1,6 +1,6 @@
 # Documentation
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/index.md)
+[简体中文](../zh/index.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 For first use, read Setup and preparation, then Using CoLayout. Continue to the development section when you want to understand or change the source. Ordinary links remain in English; 简体中文 switches to the same topic in Chinese.
 
@@ -32,4 +32,4 @@ Agent execution instructions, JSON schemas and original license texts are refere
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/index.md)
+[简体中文](../zh/index.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

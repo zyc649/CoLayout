@@ -1,6 +1,6 @@
 # 软件架构与维护边界
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/architecture.md)
+**简体中文** | [English](../en/architecture.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 CoLayout 有三大对外接口：Windows UI、本机 Agent API 和 Virtuoso 通信适配器。它们共用唯一的 Workspace、Editor 和对象身份系统。后台只读快照用于计算，不是另一套可编辑版图。
 
@@ -113,4 +113,4 @@ Qt 所属线程串行发布编辑。耗时查询、检查和批量操作使用�
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/architecture.md)
+**简体中文** | [English](../en/architecture.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

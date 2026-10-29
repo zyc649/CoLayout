@@ -1,6 +1,6 @@
 # Architecture and invariants
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/architecture.md)
+[简体中文](../zh/architecture.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 CoLayout has three external surfaces: the Windows UI, the local Agent API and the native Virtuoso adapter. They share one authoritative Workspace, Editor and object identity system. Read-only worker snapshots are not separate editable layouts.
 
@@ -111,4 +111,4 @@ Put a new shared behavior in a domain service, then expose thin UI/API adapters.
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/architecture.md)
+[简体中文](../zh/architecture.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

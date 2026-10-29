@@ -1,6 +1,6 @@
 # 安装与初始化
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/setup.md)
+**简体中文** | [English](../en/setup.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 ## 人需要准备的内容
 
@@ -103,4 +103,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/setup.md)
+**简体中文** | [English](../en/setup.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

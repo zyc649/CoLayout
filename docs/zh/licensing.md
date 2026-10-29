@@ -1,6 +1,6 @@
 # 许可与第三方声明
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/licensing.md)
+**简体中文** | [English](../en/licensing.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 CoLayout 原创源码和图标按 [MIT 协议原文（英文）](../../LICENSE)发布，署名 zyc649。该协议不改变依赖、EDA 软件、PDK 或用户导入数据的许可。第三方的原作者姓名与年份按原文保留。
 
@@ -51,4 +51,4 @@ Cadence Virtuoso、OpenAccess 相关厂商产品、Calibre、foundry PDK 和规�
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/licensing.md)
+**简体中文** | [English](../en/licensing.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

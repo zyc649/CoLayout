@@ -1,6 +1,6 @@
 # 依赖来源与版本管理
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/dependencies.md)
+**简体中文** | [English](../en/dependencies.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 感谢 **[Arcadia-1 及贡献者开发的 Virtuoso Bridge Lite（上游项目）](https://github.com/Arcadia-1/virtuoso-bridge-lite)**，它提供了连接原生工具的基础。CoLayout 的共享工作区、UI、领域检查和 Agent API 分别维护。
 
@@ -30,4 +30,4 @@ requirements-locked.txt 列出运行和开发依赖的固定版本。源码安�
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/dependencies.md)
+**简体中文** | [English](../en/dependencies.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

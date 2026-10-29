@@ -1,6 +1,6 @@
 # Licensing and third-party notices
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/licensing.md)
+[简体中文](../zh/licensing.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
 
 CoLayout's original source and artwork are licensed under [MIT](../../LICENSE), copyright zyc649. That license does not relicense its dependencies, EDA software, PDKs or imported user data. Third-party copyright names and dates are intentionally preserved.
 
@@ -51,4 +51,4 @@ Cadence Virtuoso, OpenAccess-related vendor products, Calibre, foundry PDKs and 
 
 ---
 
-[Project home](../../README.md) · [Documentation](index.md) · **English** | [简体中文](../zh/licensing.md)
+[简体中文](../zh/licensing.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

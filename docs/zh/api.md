@@ -1,6 +1,6 @@
 # Agent API
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/api.md)
+**简体中文** | [English](../en/api.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 参数细节见[接口 schema（JSON）](../../templates/layout-agent/docs/api-schema.json)。实际使用前先查询运行中 APP 的接口发现结果。
 
@@ -66,4 +66,4 @@ http_api 把调用交给所属线程；session/leases 处理占用和重放；re
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/api.md)
+**简体中文** | [English](../en/api.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

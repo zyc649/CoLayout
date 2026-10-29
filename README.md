@@ -1,6 +1,6 @@
 # CoLayout
 
-**English** | [简体中文](README.zh-CN.md) · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)
+[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)
 
 CoLayout is a lightweight Windows layout workspace for human–agent collaboration with Cadence Virtuoso. Humans organize a design into local operation regions; layout agents edit their assigned regions through a loopback HTTP API. The Windows application owns the workspace, permissions, undo history, checks and explicit native synchronization.
 
@@ -48,4 +48,4 @@ CoLayout relies on **[Virtuoso Bridge Lite by Arcadia-1 and its contributors](ht
 
 ---
 
-[Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [简体中文](README.zh-CN.md)
+[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)

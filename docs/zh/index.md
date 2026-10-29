@@ -1,6 +1,6 @@
 # 中文文档目录
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/index.md)
+**简体中文** | [English](../en/index.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
 
 第一次使用，从“安装与初始化”开始，再阅读“软件使用说明”。需要理解或修改源码时，再进入开发文档。普通链接保持中文，页首的 English 链接切换到同一主题的英文版。
 
@@ -32,4 +32,4 @@
 
 ---
 
-[项目首页](../../README.zh-CN.md) · [文档目录](index.md) · **简体中文** | [English](../en/index.md)
+**简体中文** | [English](../en/index.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
