@@ -21,6 +21,8 @@ jobs:
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
           .\.venv\Scripts\python.exe tools/check_docs.py
           if ($LASTEXITCODE) { exit $LASTEXITCODE }
+          .\.venv\Scripts\python.exe tools/check_dependencies.py
+          if ($LASTEXITCODE) { exit $LASTEXITCODE }
           .\.venv\Scripts\python.exe tools/audit_release.py
           exit $LASTEXITCODE
       - name: Synthetic regression

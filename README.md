@@ -40,7 +40,7 @@ Provide the actual DRC deck, stream map and tool/environment paths. Do not subst
 
 ## Development and licensing
 
-Start with [Architecture](docs/en/architecture.md), [Development](docs/en/development.md), [API](docs/en/api.md) and [Contributing](docs/en/contributing.md).
+For source work, start with [Taking over maintenance](docs/en/maintainer-guide.md), [Architecture](docs/en/architecture.md) and [Implementation guide](docs/en/internals.md), then [Development](docs/en/development.md), [API](docs/en/api.md) and [Contributing](docs/en/contributing.md). Deployment agents can follow the [setup runbook](docs/en/agent-setup.md).
 
 Original CoLayout code is MIT-licensed. Dependencies retain their own licenses; see [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](docs/en/licensing.md). No PDKs, private layouts, credentials or development transcripts are distributed.
 

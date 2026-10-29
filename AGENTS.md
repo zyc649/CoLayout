@@ -1,6 +1,15 @@
 # CoLayout setup and development
 
-This is the source/maintenance conversation. Read README.md (or README.zh-CN.md), docs/en/architecture.md and docs/en/development.md (or the corresponding docs/zh pages). The separate layout conversation uses only its generated client folder and public APP API.
+This is the source/maintenance conversation. Start with README.md (or README.zh-CN.md). The separate layout conversation uses only its generated client folder and public APP API.
+
+## Route the task before acting
+
+- Fresh deployment: follow [Agent setup runbook](docs/en/agent-setup.md), then the two project skills below. Report each readiness/review state, not just successful command execution.
+- Existing installation / bug fix: read [Source takeover](docs/en/maintainer-guide.md), [Architecture](docs/en/architecture.md), [Implementation guide](docs/en/internals.md) and [Development](docs/en/development.md). Chinese equivalents are under docs/zh. Inspect the active installation and preserve its work; do not automatically repeat initial server or PDK setup.
+- Process configuration: use [.agents/skills/colayout-pdk/SKILL.md](.agents/skills/colayout-pdk/SKILL.md), including its collection and MIM references.
+- Create/replace a layout workspace: use [.agents/skills/colayout-layout-agent/SKILL.md](.agents/skills/colayout-layout-agent/SKILL.md). Preserve old client history and wait for idle work.
+
+All required maintenance instructions ship in this repository. Never depend on a private handoff folder or a prior conversation. Resolve any disagreement by inspecting current implementation/tests and the user's explicit requirements, then update the documentation.
 
 ## First setup, in order
 

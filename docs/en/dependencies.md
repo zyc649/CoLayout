@@ -18,6 +18,8 @@ setup.ps1 downloads the exact archive into ignored .colayout/dependencies, verif
 
 The Git repository does not vendor the complete dependency or silently update it. A dependency outage produces a diagnosis; never fall back to an unverified main branch or another package with the same name.
 
+Run `.\.venv\Scripts\python.exe tools/check_dependencies.py` after a default installation. It verifies the archive hash, compares the checked-out dependency sources against that archive with only the documented patch allowed, and checks verbatim notices in the repository, installed source and copied skill. If setup used an external archive, pass the same file with --archive. This is a source/provenance check, not a substitute for native integration.
+
 ## Updating
 
 In a separate checkout, choose a reviewed upstream commit, compare the used APIs and patch, record the new official archive hash, verify the exact source before/after hashes, reinstall cleanly and run public regressions plus authorized native integration. Update the lock, notices and version pins together. Keep recovery compatibility and never upgrade a live shared Bridge session implicitly.

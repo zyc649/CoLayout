@@ -11,6 +11,8 @@ description: Configure CoLayout process libraries by directly collecting Virtuos
 
 ## 入口
 
+首次部署先按仓库 docs/zh/agent-setup.md（英文版 docs/en/agent-setup.md）完成安装、连接和 APP 就绪检查。只有连接正确且 API 可达后再采集；维护已有源码不代表需要重新配置工艺。具体命令位置、文件阶段和失败恢复见[执行与恢复](references/workflow.md)。
+
 先完成仓库 setup.ps1 和服务器连接检查。使用项目 .venv 的 Python 3.13；本机状态位于项目根 .colayout/installation.json。脚本入口为本 skill 的 scripts/setup.py，实现来自安装的 colayout_lite.process_agent。默认读取本安装当前 APP 连接；明确选择其他安装时可传 --api-connection。不要把 Bridge token 当作 APP token。
 
 先运行 `requirements` 获取实际配置包 schema 和连接 ID，再运行 `inspect` 确认已开的 Layout。多个候选时按用户明确的样例选择，仍有歧义才询问；不猜历史默认库/cell。参数名、层名和 via 名都取实际资料。

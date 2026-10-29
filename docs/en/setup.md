@@ -4,6 +4,8 @@
 
 ## What the user prepares
 
+For an executing agent, the [setup runbook](agent-setup.md) gives commands, success criteria and recovery decisions. This page explains the required preparation.
+
 | Item | Required information |
 |---|---|
 | Windows workstation | A writable checkout, Git, uv, permission for the setup agent to execute local commands |

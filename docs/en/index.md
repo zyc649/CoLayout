@@ -9,13 +9,16 @@ For first use, read Setup and preparation, then Using CoLayout. Continue to the 
 | Document | Contents |
 |---|---|
 | [Setup and preparation](setup.md) | Prerequisites, installation, server connection, PDK sample and separate layout-agent folder |
+| [Agent setup runbook](agent-setup.md) | Exact commands, readiness criteria, review states and restart/recovery decisions |
 | [Using CoLayout](usage.md) | Region collaboration, PINs, checks, save/recovery and shortcuts |
 
 ## Understand and maintain the source
 
 | Document | Contents |
 |---|---|
+| [Taking over source maintenance](maintainer-guide.md) | First inspection, reading order, safe bug fixing and verification limits |
 | [Architecture](architecture.md) | Diagram, module responsibilities, hierarchy, concurrency and correctness |
+| [Source implementation guide](internals.md) | Call chains, data/state models, worker adoption, recovery and existing test map |
 | [Development](development.md) | Environment, tests, troubleshooting and release validation |
 | [Agent API](api.md) | Tool boundaries, request identity, asynchronous jobs and contract maintenance |
 

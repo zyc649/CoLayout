@@ -40,7 +40,7 @@ CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 
 
 ## 开发与许可
 
-维护者从[架构](docs/zh/architecture.md)、[开发说明](docs/zh/development.md)、[API](docs/zh/api.md)和[贡献指南](docs/zh/contributing.md)开始。文档同时面向人和协助开发的 Agent。
+修改源码时，从[源码接手指南](docs/zh/maintainer-guide.md)、[架构](docs/zh/architecture.md)和[源码实现详解](docs/zh/internals.md)开始，再看[开发说明](docs/zh/development.md)、[API](docs/zh/api.md)与[贡献指南](docs/zh/contributing.md)。初始化 Agent 可直接按[执行手册](docs/zh/agent-setup.md)操作。文档同时面向人和协助开发的 Agent。
 
 CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [MIT 许可证原文（英文）](LICENSE) 和[第三方声明](docs/zh/licensing.md)。不分发私人版图、工艺文件、凭据或开发对话。
 
