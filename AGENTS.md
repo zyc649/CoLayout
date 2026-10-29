@@ -13,6 +13,8 @@ All required maintenance instructions ship in this repository. Never depend on a
 
 ## A clone-and-initialize request is also a maintenance handoff
 
+A short clone/initialize request is sufficient. The user supplies the target server/process and unavailable instance-specific information; this repository owns the detailed workflow. Read the linked guides and execute the applicable authorized steps without asking the user to restate them in a longer prompt. Ask only when required facts or choices remain unresolved after available read-only discovery.
+
 Treat the checkout containing this file as the project root and the long-term source-maintenance workspace. After cloning, explicitly read this file and the source takeover/implementation guides before changing code. Do not treat this conversation as the layout-only client.
 
 Project skill registration means keeping the two tracked skills under this checkout's .agents/skills and installing the attributed upstream Virtuoso skill through setup.ps1. Verify their SKILL.md files with tools/check_environment.py. If the host has not refreshed skill discovery, read the files directly and follow them; do not copy skills globally or claim that writing files changed host permissions.
