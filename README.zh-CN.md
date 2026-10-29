@@ -1,10 +1,53 @@
 # CoLayout
 
-**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [软件使用说明](docs/zh/usage.md)
+**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [初始化提示词](#初始化提示词) · [版图 Agent 提示词](#版图-agent-提示词)
 
 CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 Cadence Virtuoso 配合使用。人划分本地操作区，版图 Agent 通过本机 HTTP API 编辑被分配的区域；工作区、权限、撤销、检查和显式同步都由 Windows APP 统一管理。
 
 软件用于辅助版图工作，不代替完整 LVS 或工艺签核。Virtuoso、Calibre 和 PDK 由用户自行合法取得，本仓库不包含这些产品。
+
+## 复制提示词开始使用
+
+第一次部署使用下面的“初始化提示词”；软件准备好后，在专用客户端文件夹中新开对话，使用“版图 Agent 提示词”。
+
+### 初始化提示词
+
+交给负责安装和后续源码维护的 Agent。填写服务器、SSH 用户名和工艺名称即可。
+
+<!-- BEGIN SETUP PROMPT -->
+~~~text
+请将 https://github.com/zyc649/CoLayout 克隆到本地，按仓库 AGENTS.md 完成初始化：配置环境和项目级技能，启动 APP 并连接 Virtuoso，建立版图 Agent 文件夹，再根据已打开并保存的 Layout 样例推送工艺配置，供我审核。
+
+服务器：<IP>；SSH 用户：<用户名>；已配置免密登录。
+工艺名称：<名称>。样例已按文档准备，没有双排保护环。
+~~~
+<!-- END SETUP PROMPT -->
+
+[提示词说明](docs/zh/setup-prompt.md) · [样例准备清单](docs/zh/setup.md) · [初始化执行手册](docs/zh/agent-setup.md)
+
+### 版图 Agent 提示词
+
+在初始化时建立的客户端文件夹中新开对话，只授予该文件夹权限。填写操作区 ID 和任务，不需要服务器账号。
+
+<!-- BEGIN LAYOUT PROMPT -->
+~~~text
+请阅读本文件夹的 AGENTS.md，连接 CoLayout 并查询可用 API，按文档在指定操作区完成版图任务。只通过 APP 操作，不访问服务器或修改软件源码。
+
+操作区 ID：<ID>
+任务：<具体要求>
+~~~
+<!-- END LAYOUT PROMPT -->
+
+[版图提示词说明](docs/zh/layout-prompt.md) · [软件使用说明](docs/zh/usage.md)
+
+## 阅读入口
+
+| 你要做什么 | 从这里开始 |
+|---|---|
+| 安装、连接服务器、配置工艺 | [准备清单](docs/zh/setup.md) → [Agent 执行手册](docs/zh/agent-setup.md) |
+| 与 Agent 一起画版图 | [使用说明](docs/zh/usage.md) → [API 说明](docs/zh/api.md) |
+| 接手源码、修 bug 或重构 | [接手指南](docs/zh/maintainer-guide.md) → [架构](docs/zh/architecture.md) → [实现详解与测试索引](docs/zh/internals.md) |
+| 查找其他文档 | [完整中文目录](docs/zh/index.md) |
 
 ## 两个对话，两种职责
 
@@ -50,4 +93,4 @@ CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [M
 
 ---
 
-**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [安装与初始化](docs/zh/setup.md) · [软件使用说明](docs/zh/usage.md)
+**简体中文** | [English](README.md) · [文档目录](docs/zh/index.md) · [初始化提示词](#初始化提示词) · [版图 Agent 提示词](#版图-agent-提示词)

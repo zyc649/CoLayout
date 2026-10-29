@@ -1,16 +1,68 @@
 """Validate bilingual reader navigation, return routes and local Markdown links."""
 from pathlib import Path, PurePosixPath
+import posixpath
 import re
+import subprocess
+import sys
 from urllib.parse import unquote, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 LINK = re.compile(r'(?<!!)\[([^\]]+)\]\(([^ )]+)(?: +"[^"]*")?\)')
 
 
+def prose(body):
+    """Ignore both Markdown fence styles before inspecting headings and links."""
+    lines=[]; fence=None
+    for line in body.splitlines():
+        match=re.match(r'^\s*([`~]{3,})',line)
+        if match and len(set(match[1]))==1:
+            if fence is None:
+                fence=match[1];continue
+            if match[1][0]==fence[0] and len(match[1])>=len(fence):
+                fence=None;continue
+        if fence is None:lines.append(line)
+    return '\n'.join(lines)
+
+
+def anchors(body):
+    text=prose(body)
+    found=set(re.findall(r'<a\s+(?:id|name)=[\"\x27]([^\"\x27]+)',text))
+    counts={}
+    for heading in re.findall(r'^#{1,6}\s+(.+?)\s*#*$',text,re.M):
+        heading=re.sub(r'<[^>]*>','',heading)
+        slug=re.sub(r'[^\w\- ]','',heading.lower()).replace(' ','-')
+        index=counts.get(slug,0);candidate=slug if not index else slug+'-'+str(index)
+        while candidate in found:
+            index+=1;candidate=slug+'-'+str(index)
+        counts[slug]=index+1;found.add(candidate)
+    return found
+
+
+def local_links():
+    tracked=set(filter(None,subprocess.check_output(['git','ls-files','-z'],cwd=ROOT).decode('utf8').split('\0')))
+    documents=sorted(name for name in tracked if name.endswith('.md') and not name.startswith('LICENSES/'))
+    errors=[];checked=0
+    for name in documents:
+        for _,href in LINK.findall(prose((ROOT/name).read_text(encoding='utf8'))):
+            parsed=urlsplit(href)
+            if parsed.scheme or parsed.netloc:continue
+            checked+=1
+            target=(posixpath.normpath(posixpath.join(str(PurePosixPath(name).parent),unquote(parsed.path)))
+                    if parsed.path else name)
+            path=(ROOT/target).resolve()
+            if not path.is_relative_to(ROOT):
+                errors.append(name+': link escapes repository: '+href);continue
+            if target not in tracked and not any(p.startswith(target.rstrip('/')+'/') for p in tracked):
+                errors.append(name+': missing/untracked or case-mismatched target: '+href);continue
+            if parsed.fragment and path.suffix=='.md':
+                fragment=unquote(parsed.fragment).removeprefix('user-content-')
+                if fragment not in anchors(path.read_text(encoding='utf8')):
+                    errors.append(name+': missing heading anchor: '+href)
+    return documents,checked,errors
+
+
 def links(name):
-    body = (ROOT/name).read_text(encoding='utf8')
-    # Example command/JSON blocks are not navigation.
-    body = re.sub(r'^\x60{3}.*?^\x60{3}[^\n]*', '', body, flags=re.M | re.S)
+    body = prose((ROOT/name).read_text(encoding='utf8'))
     result = []
     for label, href in LINK.findall(body):
         parsed = urlsplit(href)
@@ -28,7 +80,11 @@ def links(name):
 
 
 def check():
-    errors = []
+    documents,link_count,errors=local_links()
+    sys.path.insert(0,str(ROOT))
+    from tools.build_readme_prompts import update
+    for filename in update(check=True):
+        errors.append(filename+': homepage prompt differs from its guide; run tools/build_readme_prompts.py')
     locales = {'en': 'README.md', 'zh': 'README.zh-CN.md'}
     pages = {lang: {p.name for p in (ROOT/'docs'/lang).glob('*.md')} for lang in locales}
     if pages['en'] != pages['zh']:
@@ -84,6 +140,7 @@ def check():
         if own-{home, index}-graph.get(index, set()):
             errors.append(lang+': documentation index is incomplete')
     return {'reader_pages': len(checked), 'paired_topics': len(pages['en']),
+            'markdown_files':len(documents),'local_links_checked':link_count,
             'passed': not errors, 'errors': errors}
 
 

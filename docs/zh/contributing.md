@@ -22,6 +22,8 @@ PR 描述先说明用户遇到的问题，再说明最终实现、验证与限�
 
 许可证原文、代码、接口 schema、Agent 指令及外部资料可以保留源语言，但链接必须明确标注。已发布页面移动后，旧地址保留双语选择入口。提交文档修改前运行 tools/check_docs.py。
 
+提示词正文以 docs/zh 和 docs/en 中的 setup-prompt.md、layout-prompt.md 为准。修改后运行 tools/build_readme_prompts.py 同步两个首页，再运行 tools/build_customer_api_kit.py 同步客户端 PROMPT.md。导航检查会验证首页内容一致，以及本地文件、大小写、标题锚点和同语言阅读路径，避免入口再次失联。
+
 ---
 
 **简体中文** | [English](../en/contributing.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)

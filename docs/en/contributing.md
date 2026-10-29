@@ -23,6 +23,8 @@ Reader pages live in docs/en and docs/zh with identical filenames. Both navigati
 
 Original licenses, code, API schemas, Agent instructions and external references may retain their source language; label such links explicitly. Keep old entry URLs as bilingual selectors when relocating a published page. Run tools/check_docs.py before committing documentation changes.
 
+The setup-prompt.md and layout-prompt.md pages in docs/en and docs/zh are the prompt sources. After editing them, run tools/build_readme_prompts.py for both homepages and tools/build_customer_api_kit.py for the client PROMPT.md. Navigation checks cover synchronized homepage text, local paths, case, heading anchors and language-preserving reading routes.
+
 ---
 
 [简体中文](../zh/contributing.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)

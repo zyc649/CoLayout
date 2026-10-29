@@ -1,10 +1,53 @@
 # CoLayout
 
-[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)
+[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup prompt](#setup-prompt) · [Layout-agent prompt](#layout-agent-prompt)
 
 CoLayout is a lightweight Windows layout workspace for human–agent collaboration with Cadence Virtuoso. Humans organize a design into local operation regions; layout agents edit their assigned regions through a loopback HTTP API. The Windows application owns the workspace, permissions, undo history, checks and explicit native synchronization.
 
 CoLayout is a complementary layout tool, not a replacement for foundry sign-off or a full LVS extractor. Cadence Virtuoso, Calibre and PDKs are separate licensed products and are not included.
+
+## Copy a prompt to get started
+
+Use the setup prompt for the first deployment. Once the application is ready, open a separate conversation in the generated client folder and use the layout-agent prompt.
+
+### Setup prompt
+
+Give this to the agent responsible for installation and future source maintenance. Fill in your server, SSH username and process name.
+
+<!-- BEGIN SETUP PROMPT -->
+~~~text
+Clone https://github.com/zyc649/CoLayout locally and follow AGENTS.md to initialize it: set up dependencies and project skills, start the APP, connect Virtuoso, create the layout-agent folder, and submit a process proposal from my saved, open Layout sample for my review.
+
+Server: <host>; SSH user: <user>; key-based login is configured.
+Process: <name>. The sample follows the documented requirements; no double-row guards are provided.
+~~~
+<!-- END SETUP PROMPT -->
+
+[Prompt guidance](docs/en/setup-prompt.md) · [Preparation checklist](docs/en/setup.md) · [Setup runbook](docs/en/agent-setup.md)
+
+### Layout-agent prompt
+
+Open a new conversation with access only to the generated client folder. Supply a region ID and task; no server account is needed.
+
+<!-- BEGIN LAYOUT PROMPT -->
+~~~text
+Read this folder's AGENTS.md, connect to CoLayout and discover the available API. Follow the documentation to complete the assigned layout task through the APP only, without server access or source changes.
+
+Region ID: <ID>
+Task: <requirements>
+~~~
+<!-- END LAYOUT PROMPT -->
+
+[Layout prompt guidance](docs/en/layout-prompt.md) · [User guide](docs/en/usage.md)
+
+## Reading paths
+
+| What you want to do | Start here |
+|---|---|
+| Install, connect and configure a process | [Preparation](docs/en/setup.md) → [Agent runbook](docs/en/agent-setup.md) |
+| Work on layout with an agent | [User guide](docs/en/usage.md) → [API guide](docs/en/api.md) |
+| Take over source, fix bugs or refactor | [Takeover guide](docs/en/maintainer-guide.md) → [Architecture](docs/en/architecture.md) → [Implementation and test map](docs/en/internals.md) |
+| Find another document | [Full English index](docs/en/index.md) |
 
 ## Two conversations, two roles
 
@@ -50,4 +93,4 @@ CoLayout relies on **[Virtuoso Bridge Lite by Arcadia-1 and its contributors](ht
 
 ---
 
-[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup](docs/en/setup.md) · [User guide](docs/en/usage.md)
+[简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup prompt](#setup-prompt) · [Layout-agent prompt](#layout-agent-prompt)

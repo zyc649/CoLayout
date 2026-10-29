@@ -6,7 +6,7 @@
 
 ## 0. 从初始化提示词进入正确工作区
 
-将仓库克隆到用户指定的新目录，并把实际包含 AGENTS.md、setup.ps1、colayout_lite 的目录作为项目根。仓库仍为私有时需要 GitHub 授权；不要把认证失败当作依赖安装失败，也不要把 token 写进命令、远程 URL 或日志。
+将仓库克隆到用户指定的新目录，并把实际包含 AGENTS.md、setup.ps1、colayout_lite 的目录作为项目根。公开仓库可直接克隆，访问私有 fork 时需要 GitHub 授权；不要把认证失败当作依赖安装失败，也不要把 token 写进命令、远程 URL 或日志。
 
 当前对话同时承担之后的源码维护。克隆后直接阅读 AGENTS.md、[源码接手指南](maintainer-guide.md)和[源码实现详解](internals.md)，不依赖以前的聊天或交接包。
 

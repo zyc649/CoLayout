@@ -6,7 +6,7 @@ Use this for a fresh deployment, not as an automatic repair for an existing inst
 
 ## 0. Establish the project and maintenance workspace
 
-Clone into the user's chosen new directory. Treat the directory containing AGENTS.md, setup.ps1 and colayout_lite as the project root. A private repository requires GitHub authorization; distinguish that from dependency installation failure, and never put tokens in commands, remote URLs or logs.
+Clone into the user's chosen new directory. Treat the directory containing AGENTS.md, setup.ps1 and colayout_lite as the project root. Public repositories can be cloned without GitHub sign-in; private forks require authorization. Distinguish authentication errors from dependency installation failures, and never put tokens in commands, remote URLs or logs.
 
 This conversation also owns future source maintenance. After cloning, read AGENTS.md, [Taking over source maintenance](maintainer-guide.md) and the [implementation guide](internals.md), without relying on previous conversations or a private handoff.
 
