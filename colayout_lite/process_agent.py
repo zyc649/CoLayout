@@ -25,6 +25,19 @@ def binding(client,ident=None):
     return matches[0]
 
 
+def device_summary(devices):
+    """Bounded native-master inventory; names never classify device polarity."""
+    groups={}
+    for device in devices:
+        master=tuple(device['master'])
+        groups.setdefault(master,[]).append(device['name'])
+    keys=sorted(groups)
+    return {'total_masters':len(keys),'omitted_masters':max(0,len(keys)-20),
+            'items':[{'master':list(key),'count':len(groups[key]),'instances':groups[key][:8],
+                      'omitted_instances':max(0,len(groups[key])-8)} for key in keys[:20]],
+            'full_evidence':'device-evidence.json'}
+
+
 def collect(client,folder,*,library=None,cell=None,connection_id=None,project_root=None,
             explicit_stack=None,via_uids=None,name=None,variant='',replace_key=None,skip_guards=False,layer_materials=None):
     from .process_setup import inspect_live
@@ -122,6 +135,7 @@ def collect(client,folder,*,library=None,cell=None,connection_id=None,project_ro
     write_json(folder/'collection.json',meta)
     return {**meta,'native_technology':p.native_technology_name,'configuration_key':p.key,
             'metals':order,'sample_recipes':len(recipes),'unconfigured_guards':unsupported,'devices':len(devices),
+            'device_masters':device_summary(devices),
             'mim_capacitor':drc.mim_capacitor.model_dump(mode='json'),
             'mim_next':'从 MIM 样例、技术资料及实际提取规则确认图层和上下金属；未知可提交待确认方案，由人审核填写。'}
 

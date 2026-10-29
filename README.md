@@ -13,6 +13,8 @@ CoLayout is a complementary layout tool, not a replacement for foundry sign-off 
 
 ## Getting started
 
+Use the [setup prompt template](docs/en/setup-prompt.md) for a new conversation, filling in your destination, server and SSH username.
+
 Prepare a Windows machine, Git, [uv](https://docs.astral.sh/uv/getting-started/installation/), an SSH-accessible Linux server with your licensed EDA tools, and a saved Layout sample. Your setup agent can help install prerequisites and diagnose missing host details, SSH authentication or multiple Virtuoso windows.
 
 1. Clone this repository and ask your setup agent to follow [AGENTS.md (Agent instructions)](AGENTS.md).

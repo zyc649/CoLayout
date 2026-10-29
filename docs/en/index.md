@@ -9,6 +9,7 @@ For first use, read Setup and preparation, then Using CoLayout. Continue to the 
 | Document | Contents |
 |---|---|
 | [Setup and preparation](setup.md) | Prerequisites, installation, server connection, PDK sample and separate layout-agent folder |
+| [Copyable setup prompt](setup-prompt.md) | Tell a new agent its role, connection inputs, task order and handoff scope |
 | [Agent setup runbook](agent-setup.md) | Exact commands, readiness criteria, review states and restart/recovery decisions |
 | [Using CoLayout](usage.md) | Region collaboration, PINs, checks, save/recovery and shortcuts |
 

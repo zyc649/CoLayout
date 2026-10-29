@@ -21,6 +21,8 @@ description: Configure CoLayout process libraries by directly collecting Virtuos
 
 样例应保存，包含正常 MOS、电阻和原生 MIM 电容，以及每对相邻金属之间独立的默认 1×1 标准过孔。工艺确实不支持 MIM 时明确记录，不用其他种类电容冒充。样例不必有配对原理图。普通器件用来核对原生参数与 CDF；不能按器件名字建立通用的 MOS/电阻识别规则。
 
+collect 后先核对 device_masters 摘要及 device-evidence.json 与用户声称的样例清单。实例名称不是器件类型证据：名字像 NMOS 的实例可能实际是 PMOS，两个不同名字也可能引用同一个 NMOS master。结合实际 master/CDF/PDK 资料核对；缺少所需样例时让用户补齐并保存，再用新目录重采，不能沿用旧 source_digest。原采集和已发送请求保留。
+
 MIM 层位写入 `drc.mim_capacitor`：实际图层/用途、下方金属、上方金属及证据来源。依据样例、技术文件、层映射与当前选项下的 LVS/提取规则确认，不靠层名、颜色或单个 PIN 推断。具体采集与提交见 [MIM 接触层位](references/mim.md)。无法确认时保留 `unconfigured`，可提交待审核方案，由人在“本地 DRC → MIM 电容”确认；不得因采集失败填写 `unsupported`。只有确认工艺不支持 MIM 才使用 `unsupported`。
 
 默认只启用已测量的金属层和 NW。用户要绘制其他工艺层时，需在样例中放置该层的独立矩形，采集原生 LPP、实际几何和显示样式；保持额外层未勾选，由用户在“绘图与图层”审核启用。样例图形不自动证明物理材质，材质仍取实际 PDK；标识层可以保留 unknown，不要为了开放绘制伪装成金属或井。记录 standalone_lpps，便于审核时直接显示已提供样例的层。
