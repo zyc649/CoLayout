@@ -4,6 +4,14 @@
 
 用于首次部署，不是已有安装的自动修复流程。[准备清单](setup.md)说明用户需要提供的服务器、合法 EDA、已保存样例和规则文件，不能猜测缺失信息。
 
+## 0. 从初始化提示词进入正确工作区
+
+将仓库克隆到用户指定的新目录，并把实际包含 AGENTS.md、setup.ps1、colayout_lite 的目录作为项目根。仓库仍为私有时需要 GitHub 授权；不要把认证失败当作依赖安装失败，也不要把 token 写进命令、远程 URL 或日志。
+
+当前对话同时承担之后的源码维护。克隆后直接阅读 AGENTS.md、[源码接手指南](maintainer-guide.md)和[源码实现详解](internals.md)，不依赖以前的聊天或交接包。
+
+两个自有 skill 已放在项目级 .agents/skills，setup.ps1 会补装上游 virtuoso skill。check_environment 的 project_skills 应全部为 true。宿主尚未刷新技能发现时，直接读取这三份 SKILL.md 按说明执行即可；不为此复制到全局，也不声称文件存在就等于已设置宿主权限。
+
 ## 1. 在指定 checkout 安装
 
 从仓库根目录运行：
@@ -31,6 +39,20 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 这些是占位符，不是默认值。已有 .env 保留，明确审核后才替换。复用已知环境时改用 configure --existing-env "<文件>" --remote-root "<工程>"，保留其 VB_HOME/会话，不另建冲突连接。
 
 doctor 应返回 ssh_ready。有多个 CIW 时让用户选择实际返回的窗口，不默认选第一个。connect 必须返回 connected=true，且 PID、工程均符合目标。VIRTUOSO_IDENTITY_UNAVAILABLE 或 INSTANCE_MISMATCH 不是成功。端口/profile 的复杂情况按上游 skill 处理，不杀掉或重置用户的 Virtuoso。SSH 认证在对话外配置，不索要密码或私钥。
+
+### 提示词只给服务器 IP 时
+
+先核对已有 SSH 配置或已知的匹配 Bridge 环境，不从例子猜用户名。可只查看 SSH 解析出的公开连接字段：
+
+~~~powershell
+ssh -G layout-server.example.com | Select-String '^(user|hostname|port) '
+~~~
+
+解析出的 user 可能只是本机默认名，不能直接认定正确。使用该配置进行一次正常的 BatchMode 身份验证；若失败且用户没有提供远程用户名，就询问用户名，不循环尝试 root 等常见账号。不关闭主机指纹检查。
+
+工程目录可以在所选服务器上只读查找：列出已运行的 Virtuoso 进程（例如 ps -C virtuoso -o pid=,comm=），再对实际观察到的数字 PID 读取 /proc/<PID>/cwd。多进程或不同工程时向用户确认，不自动选第一个。进程工作目录只是候选证据，后续仍须核对 CIW、Bridge 实际 PID 和 inspect 返回的工作目录。
+
+已存在且匹配目标的 Bridge 环境应明确用 --existing-env 复用，沿用其 VB_HOME 和会话。不要为一次验证启动竞争服务或重置原生身份。没有配置或资料时明确补问；这些信息不能由工艺名称推导。
 
 ## 3. 启动 APP 并确认就绪
 
@@ -76,6 +98,8 @@ check 核对原生复现和文件，不是完整 DRC/LVS。request 固定请求�
 已有共享配置可以走人端导入/审核流程，不强制重采原样例。导入仍需正确绑定本机路径，也不能宣称在新主机完成了原生往返验证。
 
 ## 5. 建立仅供版图工作的目录
+
+工艺提案处于 pending_review 时，也可以完成客户端目录建立及只读连接验证。用户要求的是“工艺推送”时，先完成这些剩余授权事项，再一起交付待审核结果；不要因为等待批准而遗漏客户端准备。客户端 ready 与工艺 enabled 分别报告，实际画图仍需工艺启用。
 
 阅读 colayout-layout-agent/SKILL.md，使用默认同级目录或明确的独立目录：
 

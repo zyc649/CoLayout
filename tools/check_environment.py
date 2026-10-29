@@ -27,7 +27,14 @@ def check():
         actual=hashlib.sha256(Path(tunnel.__file__).read_bytes().replace(b'\r\n',b'\n')).hexdigest()
         if actual!=lock['patches'][0]['after_sha256']:errors.append('Bridge compatibility source differs from the audited lock.')
     except ImportError:errors.append('Bridge is unavailable.')
-    return {'status':'failed' if errors else 'passed','versions':versions,'errors':errors}
+    skills={}
+    for name in ('colayout-pdk','colayout-layout-agent','virtuoso'):
+        path=ROOT/'.agents/skills'/name/'SKILL.md'
+        skills[name]=path.is_file()
+        if not skills[name]:errors.append('Project skill missing: '+name)
+    if not (ROOT/'.agents/skills/virtuoso/LICENSE').is_file():
+        errors.append('Upstream Virtuoso skill license is missing.')
+    return {'status':'failed' if errors else 'passed','versions':versions,'project_skills':skills,'errors':errors}
 
 
 if __name__=='__main__':

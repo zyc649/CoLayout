@@ -11,6 +11,16 @@ This is the source/maintenance conversation. Start with README.md (or README.zh-
 
 All required maintenance instructions ship in this repository. Never depend on a private handoff folder or a prior conversation. Resolve any disagreement by inspecting current implementation/tests and the user's explicit requirements, then update the documentation.
 
+## A clone-and-initialize request is also a maintenance handoff
+
+Treat the checkout containing this file as the project root and the long-term source-maintenance workspace. After cloning, explicitly read this file and the source takeover/implementation guides before changing code. Do not treat this conversation as the layout-only client.
+
+Project skill registration means keeping the two tracked skills under this checkout's .agents/skills and installing the attributed upstream Virtuoso skill through setup.ps1. Verify their SKILL.md files with tools/check_environment.py. If the host has not refreshed skill discovery, read the files directly and follow them; do not copy skills globally or claim that writing files changed host permissions.
+
+The user's initial prompt may supply only a server IP and process name. First inspect existing SSH configuration or a known matching Bridge environment; do not guess a username or project path. Use SSH's resolved configuration and one ordinary BatchMode authentication check. An unauthenticated default username is not evidence; ask for the remote username if needed. Determine candidate Virtuoso PIDs and working directories read-only on the selected server, then choose the intended window with the user if ambiguous. Preserve existing shared Bridge state. See the setup runbook for the evidence needed before configure/connect.
+
+Complete independent authorized steps even when a process proposal is pending human review: create and verify the layout-client folder as well. If the request is to push a proposal, pending_review completes submission, not activation. Report that distinction; do not require immediate approval just to finish setup, and do not use a pending process for actual design work.
+
 ## First setup, in order
 
 1. Confirm the user's local OS and intended server. The supported desktop is Windows; Virtuoso runs on a reachable Linux server/VM with the user's licensed tools and PDK. Do not infer a host, SSH username, PDK or CIW from an example.

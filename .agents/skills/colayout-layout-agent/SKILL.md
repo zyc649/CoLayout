@@ -9,6 +9,8 @@ Use this from the setup/maintenance conversation, with repository access. The ne
 
 For a new machine first follow docs/en/agent-setup.md (Chinese: docs/zh/agent-setup.md). Run the commands below from the source root with its .venv Python. This skill changes only the selected client binding; it does not configure a process or grant host permissions.
 
+The folder and HTTP connection can be prepared while a process proposal awaits human review. Report client readiness separately from process activation. Do not stop the remaining authorized setup after submitting the proposal, and do not claim/draw a real region until the user has enabled the intended process.
+
 1. Ensure setup.ps1 succeeded and the Windows APP is running. Read its status with the project Python:
    `.\.venv\Scripts\python.exe -X utf8 -m colayout_lite.bootstrap status`.
 2. Choose a user-approved folder. The default is a sibling named after the checkout plus `-layout-agent`, so it does not inherit the source project's maintenance skills. A nonempty unmanaged folder must not be overwritten.
