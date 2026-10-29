@@ -32,6 +32,27 @@ Record 禁止未知字段和非有限数值，模型层设为 frozen。但嵌套
 
 [WorkspaceStorage](../../colayout_lite/workspace_storage.py) 区分内部工作副本与外部存档，记录 document-source.json，并把恢复备份放在内部。打开/恢复不能让受保护备份变成“保存”目标。未知原生结果有单独持久状态；[sync_recovery.py](../../colayout_lite/sync_recovery.py) 在启动时与文档核对。
 
+### 数据格式与兼容入口索引
+
+以下是当前实现的版本与入口，不是迁移新格式的操作指令。优先用 APP 保存/打开、工艺导出/导入和公开客户端，不手改版本号强行加载。
+
+| 类别与版本 | 读写入口 | 兼容边界与交付方式 |
+|---|---|---|
+| colayout-document-1 | document.document_text / save_document / load_document | 便携工作区包含 workspace + technology；其他外层版本被拒绝。加载还检查身份、引用与区域约束 |
+| colayout-lite-workspace-1；colayout-local-data-1 | model.Workspace；local_models.LocalData | 内部模型，不应当作单独完整存档；通过便携文档交换 |
+| colayout-lite-storage-1 / baseline_ref | storage.save_workspace / load_baseline；Workspace.baseline_reference | 内部优化格式；带 baseline_ref 时兼容省略 storage_version，但引用必须可解析。单独复制记录可能缺基线 |
+| colayout-lite-layout-1…6（模型默认 6） | model.Snapshot；codec.decode 接收 colayout-lite-native-1…6 协议 | 旧标签可解析不代表缺失的新证据已补全；保留在工作区内，不按版本号猜测可编辑能力 |
+| colayout-circuit-2/3/4；colayout-layout-connectivity-1 | circuit.models / circuit.codec | 原理图/物理目标缓存；v4 额外核对层次证据。它们不是单独可重绑定的设计文件 |
+| colayout-lite-technology-1 | technology.TechnologyProfile | 读取时调用既有 MPP 配方迁移；仍需一致性/能力检查。对外分享统一工艺包，不分享裸本机注册表 |
+| colayout-process-package-1；外层 colayout-process-file-1 | process_package.encode / decode；ProcessConfiguration.export | 文件外层含校验和；格式/校验和不符拒绝。导入需本机路径绑定与人审核，不迁入他人运行凭据 |
+| colayout-drc-profile-1；colayout-drc-result-1 | drc.models / config / job_storage | 设置属于工艺包，结果属于带版本/范围证据的任务；旧文件缺 MIM 字段按 unconfigured，不假称不支持 |
+| colayout-agent-connection-2；colayout-agent-api-2 / colayout-agent-response-2 | agent_tools.http_api / session / client | 当前客户端只接受 v2 连接描述，拒绝 Bridge/v1 描述；用发布器更新本机描述，不手改 token 或版本 |
+| colayout-installation-1；colayout-customer-runtime-1 | bootstrap、客户端生成/发布工具 | 安装与客户执行器的本机路径配置，不是可分享的工作区/工艺文件 |
+
+旧内部 PIN 的兼容入口是 edge_pin_migration.normalize：满足条件时先保留原文件备份再归一到边缘；submitting/indeterminate/conflict 状态不做此迁移，无法合法放置时明确失败。入口兼容只解决已有格式读取，不允许绕过 pending 或证据核对。
+
+当前推荐：workspace_app/官方启动器用于人端工作区，process_agent 配合统一 process_configuration API 用于工艺提案。process_dialog.py 等兼容导入和旧辅助入口不应替代这些流程。
+
 ## 3. 人端编辑与 API 编辑
 
 人端输入经过 [MouseEdit](../../colayout_lite/mouse_edit.py)、[HumanEdit](../../colayout_lite/human_edit.py)、Actions/区域服务，再到 Editor。属性和快捷键应调用共享领域动作，不直接改图元坐标。

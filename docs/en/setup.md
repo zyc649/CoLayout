@@ -11,7 +11,7 @@ For an executing agent, the [setup runbook](agent-setup.md) gives commands, succ
 | Windows workstation | A writable checkout, Git, uv, permission for the setup agent to execute local commands |
 | Linux server or VM | Host/IP or SSH alias, remote username, reachable SSH service and verified host fingerprint |
 | EDA environment | Licensed Cadence Virtuoso; Calibre and XStream for the server check/export workflow; a working PDK |
-| Project | The absolute server directory from which the intended Virtuoso instance was launched |
+| Project | Prefer the supplied path; otherwise discover read-only and verify an unambiguous PID/directory, asking when candidates conflict |
 | Layout sample | Saved and open in that Virtuoso instance; use a design library, not the read-only PDK library |
 | Rule files | Actual process/version/options DRC main deck, stream map, executable and environment paths |
 
@@ -46,7 +46,7 @@ Start-CoLayout.cmd opens an initially empty, unconfigured local workspace. A pro
 .\.venv\Scripts\python.exe -m colayout_lite.bootstrap connect --window "<returned-CIW-ID>"
 ```
 
-Replace the example host, user and directory. If the directory is unknown, identify it with the server owner or the upstream Bridge tools; do not guess a broad filesystem root. An existing Bridge environment may be selected explicitly with `configure --existing-env <file> --remote-root <project>`; it is not overwritten.
+Replace the example host, user and directory. An unspecified directory may first be discovered and verified read-only; ask when several candidates remain or verification disagrees, rather than guessing a broad filesystem root. An existing Bridge environment may be selected explicitly with `configure --existing-env <file> --remote-root <project>`; it is not overwritten. Multiple environments for one host also require port, forwarding-target and runtime-identity checks in the [runbook](agent-setup.md).
 
 When exactly one CIW is found, connect may omit --window. With multiple CIWs, choose with the user. The helper checks the endpoint's Virtuoso PID against X11 window metadata and checks the connected project. If X11 does not expose the PID, it reports that it cannot prove the binding; complete the checks manually using the upstream tools before proceeding. It never stops another Virtuoso process to take its port.
 

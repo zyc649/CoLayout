@@ -45,6 +45,29 @@ For the shipped layout client, run `tools/smoke_layout_client.py --out <new-fold
 
 The UI is predominantly Chinese. Reader documentation has matching English and Chinese pages. Keep both versions aligned when behavior changes; ordinary navigation stays in the current language.
 
+## Prepare an isolated development installation
+
+1. Run setup.ps1 in a new checkout so it creates its own .venv, .colayout, generated config and artifacts. Do not copy production runtime directories, workspace history or pending files; keep the tracked configuration examples.
+2. Run tools/check_environment.py and read this checkout's .colayout/installation.json. Verify app_root, python_executable, document, test_kit and workspace_archive_root. The client is normally a separate sibling folder, not application source.
+3. Prefer public pytest or smoke_layout_client.py --out <new-folder> for offline work; smoke_onboarding.py is for an empty installation. Respect their scope and never supply a production document to a smoke test.
+4. For native validation, verify the connection through the setup runbook and use explicitly authorized test copies. A matching shared Bridge environment/VB_HOME may be reused, but does not create a cross-installation write lock; never write one native target concurrently from two installations.
+5. After startup, use this checkout's bootstrap status to verify document ID, revision and archive_folder, and check the process command line's --installation pointer. Window titles may be similar and are not sufficient to distinguish production/development. Keep each installation's descriptors/logs/archives separate; close the appropriate test window normally and preserve diagnostic evidence.
+
+## Acceptance by change type
+
+Use the [existing targeted test map](internals.md#8-change-location-and-existing-regression-map), not a competing list. Run the full public regression before integrating code changes; additional GUI/native checks depend on impact.
+
+| Change | Validation and evidence |
+|---|---|
+| Documentation/skill text only | Links, homepage prompt and generated-client consistency, git diff --check; no native test solely for a wording change |
+| Local geometry/permissions/merging | Synthetic targeted checks then full regression; verify failure publishes nothing, siblings survive and undo boundaries hold. Add GUI checks if display is affected |
+| UI/worker lifecycle | Real Windows Qt interaction and pythonw; offscreen covers only some widget/rendering behavior, not focus, taskbar or window-close behavior |
+| API/client | Contract/generated files and real loopback HTTP/client checks; cover restart/reconnect and unknown requests, retaining original request_id, pending and APP audit |
+| Native transactions/protocol | Offline fault tests plus authorized-copy round trips/failure recovery; retain input, receipts, save-readback and reconciliation evidence |
+| Process/check formats | Validation/serialization checks; use authorized copies when native generation or rule execution changes. Distinguish structure, reproduction, region DRC and sign-off |
+
+Repository CI still runs its configured checks. Public synthetic tests do not establish every PDK, server rule or real GUI scenario; report what was actually tested and what remains outside that evidence.
+
 ## Dependencies
 
 Bridge is source-pinned and patched reproducibly. Read [Dependency provenance](dependencies.md) before updating it. Requirements are exact versions. setup.ps1 checks the downloaded archive and patched source; it does not pull main automatically.

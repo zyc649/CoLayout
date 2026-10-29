@@ -27,7 +27,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 
 ## 2. 配置并核实原生连接
 
-向用户取得主机、SSH 用户名和准确的服务器工程目录，原生操作前阅读已安装的 virtuoso skill。对尚未配置的空白安装执行：
+使用用户提供或已核实的主机和 SSH 用户名。工程目录优先采用用户给出的值；未提供时，按下文只读发现运行中 Virtuoso 的候选目录。候选唯一且后续身份/工程核对一致时继续，有歧义再询问，不从工艺名猜路径。原生操作前阅读已安装的 virtuoso skill。对尚未配置的空白安装执行：
 
 ~~~powershell
 .\.venv\Scripts\python.exe -X utf8 -m colayout_lite.bootstrap configure --host layout-server.example.com --user designer --remote-root /workspace/design
@@ -54,6 +54,22 @@ ssh -G layout-server.example.com | Select-String '^(user|hostname|port) '
 
 已存在且匹配目标的 Bridge 环境应明确用 --existing-env 复用，沿用其 VB_HOME 和会话。不要为一次验证启动竞争服务或重置原生身份。没有配置或资料时明确补问；这些信息不能由工艺名称推导。
 
+### 同一服务器有多份 Bridge 配置时
+
+主机和 SSH 用户相同，只能说明它是候选配置。先在本机核对下表，不从多份 .env 中随便选一份后反复 start/connect。
+
+| 核对项 | 需要一致的证据 |
+|---|---|
+| 主机与用户 | 实际 daemon/GUI 主机、远程用户；分离主机按所选上游 profile 的有效设置核对 |
+| 远程端口 | 配置的远端目标端口与现有 daemon 的监听/CIW 日志证据一致 |
+| 本地转发 | 本地端口对应的实际隧道目标是该主机、该远端端口；仅有端口在监听不够 |
+| 运行身份 | VB_HOME、profile 与该隧道的本机状态记录相符，不混用其他实例的状态目录 |
+| 最终目标 | 后续核实的 CIW、Virtuoso PID、工作目录与用户指定目标一致 |
+
+只查看必要连接字段和相关进程信息，不输出整份 .env、token 或状态文件。可按已安装上游技能，用显式 --env（及需要的 profile）查看 status；它能提供现有会话的诊断证据，但不能替代目标核对。
+
+发现端口不一致时，先对照隧道、daemon/CIW 日志和候选配置，定位一致的组合，再执行正常连接验证。证据仍不明确就询问用户。工具输出中的 stop/restart 建议不是切换共享会话的授权；不能为了试配置而停止他人的连接或重置身份。
+
 ## 3. 启动 APP 并确认就绪
 
 ~~~powershell
@@ -62,6 +78,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 ~~~
 
 启动器返回 PID 不代表已就绪。允许初始化完成后读取 status。工艺配置前出现空白文档和未配置工艺是正常状态。连接被拒绝时核对此安装进程及 artifacts/lite/diagnostics，不扫描或连接其他 APP 端口。
+
+### 首次启动的有界等待
+
+只调用一次启动器，再使用上面的现有 status 命令重查。若本安装进程仍在、没有明确启动异常，但当前文档旁的 agent-connection.json 尚未生成，首次查询可能返回 SETUP_FAILED 和文件不存在信息；这不必然是安装失败。
+
+建议每隔约 2 秒查询一次，观察约 30 秒；这是排查建议，不是所有机器的启动时限保证。单次命令自身也有耗时。不要在等待期间再启动第二个 APP。
+
+| 观察结果 | 下一步 |
+|---|---|
+| API 返回工作区状态 | 核对 document_id、revision 和 archive_folder 是否属于本安装，再继续 |
+| 描述文件未生成／连接暂时被拒绝，进程仍在 | 在上述观察窗口内重查，不改配置、不扫描其他端口 |
+| 进程已退出、明确异常、认证或描述格式错误 | 立即诊断，不当成启动暂态反复重试 |
+| 等待后仍不可达 | 核对 .colayout/installation.json 的文档路径、该进程和 artifacts/lite/diagnostics，再决定下一步 |
+
+可达且返回预期文档状态才是就绪；PID 或端口监听本身不能证明就绪。
 
 ## 4. 采集并提交工艺
 
@@ -96,6 +127,31 @@ check 核对原生复现和文件，不是完整 DRC/LVS。request 固定请求�
 ~~~
 
 已有共享配置可以走人端导入/审核流程，不强制重采原样例。导入仍需正确绑定本机路径，也不能宣称在新主机完成了原生往返验证。
+
+### 从 collect 到 check：补全哪些字段
+
+以 requirements 返回的当前 schema 和 collect 产生的 package.json 为起点，保留已采集的原生数据，不从空白示例重建整包。
+
+| 类别 | 字段 | 来源与处理 |
+|---|---|---|
+| 自动采集 | technology 的单位/网格、layers、vias、原生身份；sample_evidence | 来自本次原生样例；保留引用和证据，不手工伪造 |
+| 实测默认值 | technology.editor_defaults 的 metal_stack、widths_um、layer、via_definition | 核对全部相邻层单孔测量，默认线宽不等于 DRC 最小线宽 |
+| 本地规则 | drc.rules 的 kind、layer、other_layer、value、enabled、source、note | 仅启用能准确表达的真实规则；enclosure 的 other_layer 是包围层，面积阈值单位为 µm² |
+| 服务器配置 | drc.remote 的 deck_path、layer_map、calibre、strmout、environment | 实际服务器绝对路径；check 核对可读/可执行及规则/map 哈希，不沿用示例路径 |
+| 规则选项证据 | drc.provenance | 记录实际版本、runset、已启用宏/金属选项；记录文字不会替你改写或选择 deck 宏 |
+| 可审核偏好 | drc.design_warnings、report_policy、technology.schematic_summary_parameters | 按技能默认和实际 CDF 核对；保留人已明确设置的偏好，不当作 foundry 阈值 |
+| MIM 待确认 | drc.mim_capacitor | configured 需真实 LPP、上下金属及 source；未知可用 unconfigured，只有确认不支持才用 unsupported |
+| 可选能力 | technology.guard_recipes / guard_templates | 新配置保留实际开放样例生成的配方；无双排样例不启用双排，不编造验证回执 |
+
+check/submit 要求完整绘图默认值、服务器 DRC 配置、至少一条启用且有依据的本地规则，以及一致的技术身份/层引用；缺少这些会被拒绝。MIM 的 unconfigured 可以保留到待审核提案，但启用前必须由人确认。可选保护环不需要为“填满配置”而虚构。
+
+当前 Rule 模型没有可填写的区域例外或电气条件表达式。source 是依据，note 是说明；例如把“排除某类区域”写进备注，并不会让该区域从检查中消失。无法表达条件的规则保持未启用并说明原因，不能删去条件后启用。结构/文件核对或原生几何复现通过，也不证明这些条件已经实现。
+
+#### environment 的实际含义
+
+它是服务器上供 Bash source 的环境初始化文件，设置工具所需的 PATH、许可证等环境；不是一个目录，也不能直接把 csh/tcsh 专用脚本当作 Bash 脚本。当前启动流程使用 bash -lc，先 source 此文件，再进入工程目录启动检查进程；加载输出会被重定向。
+
+只读核对文件的语法、导出变量、所引用脚本及其与 calibre/strmout 路径的对应关系，不输出凭据。当前配置检查只验证环境文件可读，不执行完整环境/许可证自检；source 失败也不一定令启动命令立即失败。实际运行异常需查看保留的 launcher/worker/tool 日志，不能把“路径存在”当作环境已经有效。
 
 ## 5. 建立仅供版图工作的目录
 

@@ -27,7 +27,7 @@ Missing Git/uv is reported; install from official instructions within the user's
 
 ## 2. Configure and prove the native connection
 
-Get host/SSH user and the exact server project directory from the user. Read the installed virtuoso skill before native work. For an unconfigured empty installation:
+Use the supplied or verified host and SSH user. Prefer a user-supplied project directory; otherwise discover candidate Virtuoso working directories read-only as described below. Continue when the candidate is unambiguous and subsequent identity/project checks agree; ask if ambiguity remains, and never infer a path from the process name. Read the installed virtuoso skill before native work. For an unconfigured empty installation:
 
 ~~~powershell
 .\.venv\Scripts\python.exe -X utf8 -m colayout_lite.bootstrap configure --host layout-server.example.com --user designer --remote-root /workspace/design
@@ -54,6 +54,22 @@ Discover project candidates read-only on the selected server: list running Virtu
 
 Explicitly reuse a matching existing Bridge environment with --existing-env, preserving its VB_HOME/session. Do not create a competing service or reset native identity for a test. Ask for unresolved information rather than deriving it from a process-library name.
 
+### Several Bridge configurations for the same server
+
+Matching host and SSH user establishes only a candidate. Compare the following locally before choosing a file; do not repeatedly start/connect arbitrary .env candidates.
+
+| Item | Evidence that must agree |
+|---|---|
+| Host and user | Actual daemon/GUI hosts and remote user; use the selected upstream profile's effective settings for split hosts |
+| Remote port | Configured destination port agrees with the existing daemon's listener/CIW log evidence |
+| Local forwarding | The local port's actual tunnel destination is that host and remote port; a listener alone is insufficient |
+| Runtime identity | VB_HOME/profile agrees with the tunnel's local state, without mixing another instance's runtime directory |
+| Final target | Subsequently verified CIW, Virtuoso PID and working directory match the intended target |
+
+Read only necessary connection fields and relevant process details; do not dump complete .env files, tokens or state files. Follow the installed upstream skill to inspect status with explicit --env and, when needed, profile. Status provides existing-session evidence, not a substitute for target verification.
+
+For a port mismatch, compare the tunnel, daemon/CIW logs and candidate configurations first, then verify the consistent choice through the normal connection flow. Ask if ambiguity remains. A tool's stop/restart suggestion does not authorize switching a shared session; do not stop another connection or reset identity merely to try a configuration.
+
 ## 3. Start the APP and inspect readiness
 
 ~~~powershell
@@ -62,6 +78,21 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 ~~~
 
 The launcher returning a PID is not proof of readiness. Allow initialization, then read status. An empty document and unconfigured process are expected before onboarding. If refused, inspect this installation's process and artifacts/lite/diagnostics; do not scan for another APP or attach to an unrelated port.
+
+### Bounded first-start waiting
+
+Launch once, then repeat the existing status command above. If this installation's process is still alive with no explicit startup failure, a missing agent-connection.json beside the current document can be transient: the first query may return SETUP_FAILED with a file-not-found message.
+
+A reasonable diagnostic window is one query about every 2 seconds for about 30 seconds, not a guaranteed startup deadline on every machine. Each command also takes time. Do not start a second APP while waiting.
+
+| Observation | Next action |
+|---|---|
+| API returns workspace status | Confirm document_id, revision and archive_folder belong to this installation before continuing |
+| Descriptor not yet written / connection temporarily refused, process still alive | Retry within the observation window without reconfiguring or scanning other ports |
+| Process exited, explicit exception, authentication or descriptor-format failure | Diagnose immediately instead of treating it as a transient startup |
+| Still unreachable after waiting | Check the pointer's document path, that process and artifacts/lite/diagnostics before deciding what to do |
+
+Readiness means a reachable API returning the intended document state, not merely a PID or listening port.
 
 ## 4. Collect and submit the process
 
@@ -96,6 +127,31 @@ Use list to discover the approved key, then export when requested. Export never 
 ~~~
 
 An existing shared configuration can use the human import/review path instead of recollecting the original sample. Imported packages still need appropriate local path binding and cannot claim a new native round-trip.
+
+### From collect to check: completion checklist
+
+Start from the current schema returned by requirements and the collected package.json. Preserve native data instead of reconstructing a whole package from a blank example.
+
+| Category | Fields | Source and handling |
+|---|---|---|
+| Collected facts | technology units/grid, layers, vias, native identity; sample_evidence | Current native sample; retain references/evidence rather than inventing them |
+| Measured defaults | technology.editor_defaults metal_stack, widths_um, layer, via_definition | Check all adjacent-layer single-via measurements; wire defaults are not DRC minimums |
+| Local rules | drc.rules kind, layer, other_layer, value, enabled, source, note | Enable only actual rules that can be represented faithfully; enclosure's other_layer is the enclosing layer, area uses µm² |
+| Server execution | drc.remote deck_path, layer_map, calibre, strmout, environment | Actual absolute server paths; check verifies readability/executability and deck/map hashes, not example paths |
+| Option evidence | drc.provenance | Record actual version, runset and active macros/metal options; text does not change or select deck macros |
+| Reviewable preferences | drc.design_warnings, report_policy, technology.schematic_summary_parameters | Skill defaults and actual CDF; preserve explicit human preferences, separate from foundry thresholds |
+| MIM confirmation | drc.mim_capacitor | configured requires actual LPP, metal pair and source; unknown may remain unconfigured, unsupported needs confirmed absence |
+| Optional capabilities | technology.guard_recipes / guard_templates | New configuration retains recipes from actual open samples; no invented double rows or verification receipts |
+
+check/submit require complete drawing defaults, server DRC configuration, at least one enabled local rule with evidence, and consistent technology/layer references. Missing these is rejected. MIM unconfigured may reach pending review, but must be resolved by the human before activation. Do not invent optional guards merely to fill the package.
+
+The current Rule model has no user-specified regional-exception or electrical-condition expression. source records evidence; note is descriptive. Writing “exclude a certain region” in a note does not exclude that region. Leave an unrepresentable conditional rule disabled with an explanation rather than removing its condition and enabling it. Structural/file checks and native reproduction do not prove those conditions are implemented.
+
+#### What environment actually means
+
+This is a server-side initialization file compatible with Bash source, setting PATH, licensing and other required tool environment. It is not a directory, and a csh/tcsh-only script is not automatically usable as Bash. The current launcher uses bash -lc, sources the file, changes to the project directory and starts the check process; sourcing output is redirected.
+
+Inspect its syntax, exported variables, referenced scripts and relationship to the calibre/strmout paths read-only, without printing credentials. Configuration checking currently verifies readability, not a complete environment/license self-test; a failed source does not necessarily fail the launch command immediately. Inspect retained launcher/worker/tool logs on execution failure rather than treating an existing path as proof of a valid environment.
 
 ## 5. Create the layout-only folder
 

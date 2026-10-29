@@ -37,6 +37,8 @@ Local child operation regions are separate from native hierarchy. Their internal
 
 Do not change device parameters to hide a mismatch or invent a waiver. If a native-source baseline check fails, stop and reconcile the actual source/dependency change before synchronizing.
 
+When reviewing local rules, source/note are evidence and descriptions, not executable regional exceptions or electrical conditions. Keep rules with unrepresentable conditions disabled with a reason; a note alone does not implement the condition.
+
 ## Save, reopen and recovery
 
 The APP automatically maintains its internal working document and recovery records. Explicit Save / Save As creates or updates the user's portable JSON archive. Later editing does not continuously rewrite that archive.

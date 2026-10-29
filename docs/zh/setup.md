@@ -11,7 +11,7 @@
 | Windows 电脑 | 可写的源码目录、Git、uv，以及初始化 Agent 执行本地命令的权限 |
 | Linux 服务器或虚拟机 | IP／主机名或 SSH 别名、远程用户名、可访问的 SSH 服务、已核实的主机指纹 |
 | EDA 环境 | 合法安装的 Virtuoso；服务器检查／导出流程所需的 Calibre、XStream；完整可用的 PDK |
-| 工程目录 | 目标 Virtuoso 启动时所在的服务器绝对路径 |
+| 工程目录 | 优先使用用户给出的路径；未提供时可只读发现，核对唯一候选的 PID/目录后继续，有歧义再询问 |
 | Layout 样例 | 已保存并在目标 Virtuoso 中打开；放在设计库中，不要直接改只读 PDK 库 |
 | 工艺规则 | 对应版本和选项的真实 DRC 主文件、stream map、工具与环境文件路径 |
 
@@ -46,7 +46,7 @@ Start-CoLayout.cmd 会打开空白、尚未配置工艺的工作区。
 .\.venv\Scripts\python.exe -m colayout_lite.bootstrap connect --window "<实际返回的CIW编号>"
 ```
 
-替换示例主机、用户名和工程目录。不知道目录时，先向用户／管理员确认，或用上游 Bridge 工具只读核对，不能用一个宽泛根目录代替。已有 Bridge 环境可通过 configure --existing-env 明确选择，不会覆盖原环境文件。
+替换示例主机、用户名和工程目录。未给目录时允许先只读发现并核对；有多个合理候选或验证不一致时再询问，不能用一个宽泛根目录代替。已有 Bridge 环境可通过 configure --existing-env 明确选择，不会覆盖原环境文件；同主机的多份环境还需核对端口、转发目标和运行身份，见[执行手册](agent-setup.md)。
 
 只有一个 CIW 时可省略 --window；多个窗口必须让用户选择。工具会核对 Bridge 端点对应的 Virtuoso PID、X11 窗口 PID 和工程目录。如果服务器没有提供窗口 PID，会明确报告无法证明绑定关系，需用上游工具进一步人工核实，不会默认为成功，也不会停止其他 Virtuoso 抢占端口。
 

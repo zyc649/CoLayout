@@ -23,6 +23,8 @@ The user's initial prompt may supply only a server IP and process name. First in
 
 Complete independent authorized steps even when a process proposal is pending human review: create and verify the layout-client folder as well. If the request is to push a proposal, pending_review completes submission, not activation. Report that distinction; do not require immediate approval just to finish setup, and do not use a pending process for actual design work.
 
+For multiple Bridge environments, host/user equality is only a candidate match: verify ports, actual tunnel destination and VB_HOME/profile before reuse, then PID/project. First-start status can be transient before its descriptor exists; use the runbook's bounded retry, not another APP launch. Tool suggestions to stop/restart a shared session do not provide user authorization.
+
 ## First setup, in order
 
 1. Confirm the user's local OS and intended server. The supported desktop is Windows; Virtuoso runs on a reachable Linux server/VM with the user's licensed tools and PDK. Do not infer a host, SSH username, PDK or CIW from an example.

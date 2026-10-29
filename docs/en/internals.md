@@ -32,6 +32,27 @@ Three different quantities must remain distinct: local Workspace.revision, nativ
 
 [WorkspaceStorage](../../colayout_lite/workspace_storage.py) separates the internal working copy from the external archive, records document-source.json, and keeps recovery backups internally. Opening/restoring must not turn a protected recovery file into the Save destination. Unknown native state has its own persisted copy; [sync_recovery.py](../../colayout_lite/sync_recovery.py) reconciles it with the document on startup.
 
+### Data-format and compatibility index
+
+These are current formats/entry points, not instructions to invent a migration. Prefer APP save/open, process export/import and the public client; never force loading by editing a version tag.
+
+| Category/version | Reader/writer | Compatibility and delivery boundary |
+|---|---|---|
+| colayout-document-1 | document.document_text / save_document / load_document | Portable workspace embeds workspace + technology; other outer versions are rejected. Loading also checks identity, references and region constraints |
+| colayout-lite-workspace-1; colayout-local-data-1 | model.Workspace; local_models.LocalData | Internal models, not standalone complete archives; exchange through the portable document |
+| colayout-lite-storage-1 / baseline_ref | storage.save_workspace / load_baseline; Workspace.baseline_reference | Internal optimization; a baseline_ref record may omit storage_version but its reference must resolve. Copying only the record can lose its baseline |
+| colayout-lite-layout-1…6 (model default 6) | model.Snapshot; codec.decode accepts colayout-lite-native-1…6 protocols | Parsing an old tag does not supply missing evidence; keep snapshots within the workspace, not as proof of edit capability |
+| colayout-circuit-2/3/4; colayout-layout-connectivity-1 | circuit.models / circuit.codec | Reference/physical-target caches; v4 additionally validates hierarchy evidence. Not standalone rebindable designs |
+| colayout-lite-technology-1 | technology.TechnologyProfile | Existing MPP recipe migration runs on read, followed by consistency/capability checks. Share a unified process package, not a local registry |
+| colayout-process-package-1; outer colayout-process-file-1 | process_package.encode / decode; ProcessConfiguration.export | Outer checksum and format are checked; import requires local binding and human review, not another user's runtime credentials |
+| colayout-drc-profile-1; colayout-drc-result-1 | drc.models / config / job_storage | Settings belong to the process package; results belong to a stamped/scoped job. Missing legacy MIM data becomes unconfigured, not unsupported |
+| colayout-agent-connection-2; colayout-agent-api-2 / colayout-agent-response-2 | agent_tools.http_api / session / client | Current client accepts only v2 descriptors and rejects Bridge/v1 descriptors; update through publication, not edited tokens/version tags |
+| colayout-installation-1; colayout-customer-runtime-1 | bootstrap and client generation/publication tools | Host-specific installation/executor paths, not shareable workspace/process files |
+
+edge_pin_migration.normalize handles legacy interior PINs: where applicable it preserves a source backup before moving to a legal edge. submitting/indeterminate/conflict workspaces skip this migration, and impossible placement fails explicitly. Compatibility is not permission to bypass pending state or evidence checks.
+
+Recommended entry points remain workspace_app/the launcher for the human workspace, and process_agent plus unified process_configuration for proposals. Compatibility imports such as process_dialog.py and older helpers do not replace those workflows.
+
 ## 3. A human edit and an API edit
 
 Human input flows through [MouseEdit](../../colayout_lite/mouse_edit.py), [HumanEdit](../../colayout_lite/human_edit.py), Actions/region services and Editor. Properties and shortcuts must call the same domain actions rather than directly editing graphics-item coordinates.
