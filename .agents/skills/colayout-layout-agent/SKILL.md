@@ -21,6 +21,8 @@ The folder and HTTP connection can be prepared while a process proposal awaits h
 
 The generated folder contains the standard-library SDK/CLI, a snapshot of the live API contract, role instructions, and empty directories for requests, outputs, workspaces and feedback. It must not contain another agent's work, the APP source, Bridge scripts, .env, private keys or the maintenance chat.
 
+Give the user the generated PROMPT.md for the new layout conversation. It only needs the assigned region ID and task; runtime instructions remain in AGENTS.md/README.md/docs/API.md. Do not give this role a server or root account.
+
 `--offline` prepares files only and does not claim a working connection. Re-run with `--update` after the APP is available.
 
 ## Replacement and restart

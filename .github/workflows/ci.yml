@@ -39,3 +39,10 @@ jobs:
         run: |
           .\.venv\Scripts\python.exe tools/smoke_onboarding.py --out .colayout/smoke
           exit $LASTEXITCODE
+      - name: Layout client editing and isolation
+        shell: powershell
+        env:
+          QT_QPA_PLATFORM: offscreen
+        run: |
+          .\.venv\Scripts\python.exe tools/smoke_layout_client.py --out .colayout/layout-client-smoke
+          exit $LASTEXITCODE

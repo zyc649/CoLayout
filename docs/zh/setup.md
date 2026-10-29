@@ -19,6 +19,8 @@
 
 SSH 使用现有密钥或密钥代理；没有免密能力时请先配置或联系管理员。不要在对话中发送密码、私钥。首次连接正常核实服务器指纹，初始化工具不会关闭主机指纹验证。
 
+SSH 优先使用运行 Virtuoso、拥有设计目录权限的普通账号，不因为 Agent 执行任务就改用 root。系统安装等管理操作另行按需处理；日常连接、工艺采集和版图工作不需要长期授予 root。版图 Agent 仅连接本机 APP，无需 SSH 账号。root 登录还受服务器的 [PermitRootLogin 配置（OpenSSH 官方英文）](https://man.openbsd.org/sshd_config#PermitRootLogin)控制，账号权限更高不等于更容易连接正确会话。
+
 ## 1. 拉取和安装
 
 ```powershell

@@ -12,6 +12,7 @@ For first use, read Setup and preparation, then Using CoLayout. Continue to the 
 | [Copyable setup prompt](setup-prompt.md) | Tell a new agent its role, connection inputs, task order and handoff scope |
 | [Agent setup runbook](agent-setup.md) | Exact commands, readiness criteria, review states and restart/recovery decisions |
 | [Using CoLayout](usage.md) | Region collaboration, PINs, checks, save/recovery and shortcuts |
+| [Layout-agent prompt](layout-prompt.md) | Start the separate drawing conversation with a region ID and task, without server credentials |
 
 ## Understand and maintain the source
 

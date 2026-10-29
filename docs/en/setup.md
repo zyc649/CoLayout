@@ -19,6 +19,8 @@ The LLM runs in your chosen agent host. CoLayout does not require model-provider
 
 For SSH, configure an existing key/agent or obtain help from your administrator. Do not send passwords or private keys to a conversation. On first connection verify the host fingerprint normally. The setup helper uses BatchMode and never disables host-key verification.
 
+Prefer the ordinary account running Virtuoso and owning the design directory. Using an agent does not require changing that account to root. Handle necessary administrative installation separately; routine connection and process collection do not need permanent root access. Layout agents use the local APP only and need no SSH account. Root login is also controlled by the server's [PermitRootLogin setting](https://man.openbsd.org/sshd_config#PermitRootLogin); higher privileges do not establish the correct GUI session.
+
 ## 1. Clone and install
 
 ```powershell

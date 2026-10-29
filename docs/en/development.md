@@ -28,6 +28,8 @@ The public tests use synthetic geometry and mocked/native receipts. They do not 
 
 Background-thread tests use QEventLoop with deadlines, not sleeps that starve Qt. Assert the result and retained state on failure as well as on success.
 
+For the shipped layout client, run `tools/smoke_layout_client.py --out <new-folder>` with the project Python (also pythonw on Windows). It creates a separate synthetic APP/document and uses the generated folder's python.cmd through real HTTP: discovery, claims, sibling edits, wires/vias, net inspection, owned undo, local checks, screenshot, archive and handoff. It verifies rejection of out-of-scope edits and unverified completion. It never uses a real PDK or server DRC. Keep the output for diagnosis; an existing output directory is refused.
+
 ## Areas to inspect when debugging
 
 | Symptom | Evidence and entry points |

@@ -1,4 +1,4 @@
-"""Generate only the SDK and API schema; never overwrite customer scripts or runtime."""
+"""Generate SDK, schema and copyable prompt; never overwrite customer scripts or runtime."""
 
 import argparse
 import json
@@ -10,7 +10,17 @@ KIT = APP / 'templates/layout-agent'
 
 
 def generated_files():
+    prompts={}
+    for language in ('zh','en'):
+        document=(APP/'docs'/language/'layout-prompt.md').read_text(encoding='utf8')
+        prompts[language]=document.split('~~~text\n',1)[1].split('\n~~~',1)[0]
+    prompt=('# Layout prompt / 版图提示词\n\n'
+            '[简体中文](#简体中文) | [English](#english) · [README](README.md)\n\n'
+            '<!-- Generated from docs/zh/layout-prompt.md and docs/en/layout-prompt.md. -->\n\n'
+            '## 简体中文\n\n~~~text\n'+prompts['zh']+'\n~~~\n\n'
+            '## English\n\n~~~text\n'+prompts['en']+'\n~~~\n')
     return {
+        'PROMPT.md':prompt.encode('utf8'),
         'colayout_client.py': (APP / 'colayout_lite/agent_tools/client.py').read_bytes(),
         'docs/api-schema.json': json.dumps(describe_tools(), ensure_ascii=False, indent=2).encode(
             'utf8'

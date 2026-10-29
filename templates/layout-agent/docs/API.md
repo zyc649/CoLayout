@@ -24,3 +24,9 @@ Useful conventions:
 - A port returning connection refused is a maintenance issue. Do not scan for another service or connect directly to Virtuoso.
 
 Read `api.py --help` for CLI names. Send raw tool arguments with the existing CLI call facility or use colayout_client.py; do not import APP implementation modules.
+
+## Preparing a raw edit
+
+Run `api.py --client <name> inspect layout` and use the response's top-level revision as expected_revision. Discover the exact action with `tools --tool edit_region --action create_path90` (or another action). Save the arguments JSON under requests/, then call `api.py --client <same-name> call edit_region --args requests/edit.json --wait-seconds 20`.
+
+The CLI injects its private session_token; do not copy the redacted token from output. It does not invent expected_revision or coordinates for you. Use actual scoped IDs/PIN coordinates and the current process definitions. Inspect edits after application; for an asynchronous result, keep its job_id and query status until edit_applied is established. Never repeat a submitted edit just because waiting ended.

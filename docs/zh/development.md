@@ -28,6 +28,8 @@ Start-CoLayout.cmd 委托 tools/project.ps1 启动。源码采用 editable 安�
 
 后台测试使用带截止时间的 QEventLoop，不用阻塞 Qt 的 sleep。既要断言成功结果，也要检查失败时保留的状态。
 
+客户端验收可用项目 Python 执行 `tools/smoke_layout_client.py --out <新目录>`，Windows 也用 pythonw 验证。它创建独立合成 APP/文档，通过生成目录的 python.cmd 和真实 HTTP 测试发现、接入、兄弟区编辑、画线/过孔、网络查询、自有撤销、本地检查、截图、存档与交接，并验证越区编辑及未验收完成会被拒绝。它不使用真实 PDK 或服务器 DRC。输出保留用于排错，已有输出目录拒绝覆盖。
+
 ## 排错入口
 
 | 现象 | 应检查的证据与入口 |

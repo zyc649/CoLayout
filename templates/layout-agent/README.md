@@ -4,6 +4,8 @@ This client talks only to the running Windows APP. Give a separate layout conver
 
 本客户端只连接 Windows APP。请为单独的版图对话仅授权本文件夹，先阅读 AGENTS.md。安装、工艺配置、源代码维护和直接服务器操作由初始化／维护对话负责。
 
+[版图 Agent 提示词 / Layout prompt](PROMPT.md)可直接复制；填写操作区 ID 和任务即可。无需提供 SSH 或 root 账号。
+
 ```powershell
 .\python.cmd service.py connect
 .\python.cmd api.py --client layout-1 tools
