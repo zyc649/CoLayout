@@ -136,16 +136,16 @@ check 核对原生复现和文件，不是完整 DRC/LVS。request 固定请求�
 |---|---|---|
 | 自动采集 | technology 的单位/网格、layers、vias、原生身份；sample_evidence | 来自本次原生样例；保留引用和证据，不手工伪造 |
 | 实测默认值 | technology.editor_defaults 的 metal_stack、widths_um、layer、via_definition | 核对全部相邻层单孔测量，默认线宽不等于 DRC 最小线宽 |
-| 本地规则 | drc.rules 的 kind、layer、other_layer、value、enabled、source、note | 仅启用能准确表达的真实规则；enclosure 的 other_layer 是包围层，面积阈值单位为 µm² |
+| 本地规则 | drc.rules 的 kind、layer、other_layer、value、enabled、source、note | 优先启用有真实依据且有用的简化检查，注明有限误报和未覆盖条件；enclosure 的 other_layer 是包围层，面积阈值单位为 µm² |
 | 服务器配置 | drc.remote 的 deck_path、layer_map、calibre、strmout、environment | 实际服务器绝对路径；check 核对可读/可执行及规则/map 哈希，不沿用示例路径 |
 | 规则选项证据 | drc.provenance | 记录实际版本、runset、已启用宏/金属选项；记录文字不会替你改写或选择 deck 宏 |
 | 可审核偏好 | drc.design_warnings、report_policy、technology.schematic_summary_parameters | 按技能默认和实际 CDF 核对；保留人已明确设置的偏好，不当作 foundry 阈值 |
 | MIM 待确认 | drc.mim_capacitor | configured 需真实 LPP、上下金属及 source；未知可用 unconfigured，只有确认不支持才用 unsupported |
 | 可选能力 | technology.guard_recipes / guard_templates | 新配置保留实际开放样例生成的配方；无双排样例不启用双排，不编造验证回执 |
 
-check/submit 要求完整绘图默认值、服务器 DRC 配置、至少一条启用且有依据的本地规则，以及一致的技术身份/层引用；缺少这些会被拒绝。MIM 的 unconfigured 可以保留到待审核提案，但启用前必须由人确认。可选保护环不需要为“填满配置”而虚构。
+check/submit 要求完整绘图默认值、服务器 DRC 配置、至少一条启用且有依据的本地规则，以及一致的技术身份/层引用；缺少这些会被拒绝。优先建立有用的本地简化规则子集，不因部分条件无法表达就全部禁用；确实没有可用子集时说明具体障碍，不编造阈值。MIM 的 unconfigured 可以保留到待审核提案，但启用前必须由人确认。可选保护环不需要为“填满配置”而虚构。
 
-当前 Rule 模型没有可填写的区域例外或电气条件表达式。source 是依据，note 是说明；例如把“排除某类区域”写进备注，并不会让该区域从检查中消失。无法表达条件的规则保持未启用并说明原因，不能删去条件后启用。结构/文件核对或原生几何复现通过，也不证明这些条件已经实现。
+当前 Rule 模型没有可填写的区域例外或电气条件表达式。source 是依据，note 是说明；例如写入“排除某类区域”不会自动实现区域排除。对于有依据且仍然有用的检查，允许有限误报并默认启用，注明原条件、实际简化及可能的误报/漏检。只有依据不足、算法无法执行，或简化会频繁误报合法基础结构、严重影响使用时，才禁用。不能把所有条件分支的阈值全域叠加，使最严格分支支配全部情况。遵从用户的明确取舍并保留服务器完整检查；结构/文件核对或原生复现通过不等于完整 DRC 等价。
 
 #### environment 的实际含义
 

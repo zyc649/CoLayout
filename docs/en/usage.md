@@ -37,7 +37,7 @@ Local child operation regions are separate from native hierarchy. Their internal
 
 Do not change device parameters to hide a mismatch or invent a waiver. If a native-source baseline check fails, stop and reconcile the actual source/dependency change before synchronizing.
 
-When reviewing local rules, source/note are evidence and descriptions, not executable regional exceptions or electrical conditions. Keep rules with unrepresentable conditions disabled with a reason; a note alone does not implement the condition.
+When reviewing local rules, source/note are evidence and descriptions, not executable regional exceptions or electrical conditions. Useful simplified checks should normally remain enabled even when omitted conditions can cause limited false positives; review the stated simplification and possible missed cases. Disable rules only when evidence is insufficient, the algorithm cannot perform the check, or repeated false positives on legal basic structures would make editing impractical. A note does not implement an omitted condition, and full server DRC remains necessary.
 
 ## Save, reopen and recovery
 

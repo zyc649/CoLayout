@@ -35,6 +35,8 @@ MIM 层位写入 `drc.mim_capacitor`：实际图层/用途、下方金属、上�
 
 配置以采集和忠实复现为主。默认 check 不运行保护环 DRC，也不自动执行全套本地/服务器 DRC 试验；仅核对数据、文件路径/哈希和必要的原生往返。不能把几何核对通过描述为 DRC/LVS 通过。只有用户要求或具体问题需要定位时，才做针对性的额外检查，保留报告。实际设计仍需完整检查。
 
+本地 DRC 的目标是提供可用的快速筛查。默认启用有真实依据、对常规版图有用的宽度、间距、面积和包围规则；缺少部分区域例外或电气条件，不是自动禁用理由。允许有限误报，并在 source/note 中说明原规则条件、实际简化、可能误报或漏检的场景，交由人审核。只有阈值/层位没有依据、算法无法执行，或简化会频繁误报合法基础结构、造成严重冲突以至于无法使用时，才禁用并说明具体原因。用户明确的取舍优先；不要为了追求条件完全等价而把本地规则全部关闭。具体选择见[采集与规则依据](references/collection.md#drc)。
+
 ```powershell
 $python = Join-Path (Get-Location) '.venv/Scripts/python.exe'
 $setup = Join-Path (Get-Location) '.agents/skills/colayout-pdk/scripts/setup.py'
