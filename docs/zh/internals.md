@@ -100,6 +100,8 @@ AgentHTTPServer POST /call
 
 commit 核对可提交状态、引用、源/依赖和待提交几何；准备 TransactionJournal 与备份身份；持久化 submitting；执行原生事务；核验回执和实际保存几何。只有验证成功才采用新基线并清操作。确认回滚仍保留草稿；分发后异常保留 indeterminate 证据。
 
+原生会话重新打开后，MPP 子部件的枚举顺序可能改变。同步前置检查、读回及回滚/恢复核对不依赖该顺序，但保留全部字段和重复部件数量。网络补全按非网络字段匹配部件，匹配歧义时拒绝补全，仍需原有物理网络证据。持久快照、请求哈希及原生事务前置条件保留原始表示。参见 [MPP 顺序回归测试](../../tests_lite/test_mpp_part_order.py)；不能通过清除 pending 或忽略真实部件变化解决误报。
+
 [TransactionJournal / Receipt](../../colayout_lite/transactions.py) 绑定 request_id、payload hash 和目标。reconcile 比较实际目标与预期结果、原基线；两者都不符合时报 INDETERMINATE_COMMIT。仅有回执不够。没有未决事务的基线差异，不能通过清日志“修复”。
 
 [NativeTransport](../../colayout_lite/transport.py) 在构造时连接，首次使用时加载 NATIVE_SCRIPTS，编码数据而非任意代码。colayout_lite/skill 是 CoLayout 的原生协议实现，上游 Python 依赖单独安装。修改协议时同步处理两端和失败回归，保持 wire version、回执结构与 UID 核对兼容。

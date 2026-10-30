@@ -1,8 +1,39 @@
 """Semantic preconditions and native readback verification; no I/O."""
 
+import json
+
 from .model import LiteError
 from .editor import projected
 from .hierarchy import same_dependencies
+
+
+def _part_key(part):
+    return json.dumps(part,sort_keys=True,ensure_ascii=False,separators=(',',':'),allow_nan=False)
+
+
+def _ordered_parts(parts):
+    # ROD subParts enumeration can change after reopening. Keep every value and
+    # duplicate; only normalize order in comparisons, never in persisted hashes.
+    return sorted(parts,key=_part_key)
+
+
+def same_snapshot(a,b):
+    """Strict snapshot semantics, except for MPP part enumeration order."""
+    def semantic(snapshot):
+        data=snapshot.semantic()
+        for obj in data['objects'].values():
+            if obj['mpp']:obj['mpp']['parts']=_ordered_parts(obj['mpp']['parts'])
+        return data
+    return semantic(a)==semantic(b)
+
+
+def _part_pairs(before,after):
+    """Match net enrichment by all non-net fields; ambiguity is not evidence."""
+    if len(before)!=len(after) or any(not isinstance(p,dict) for p in [*before,*after]):return None
+    def key(p):return _part_key({k:v for k,v in p.items() if k!='net_name'})
+    left={key(p):p for p in before};right={key(p):p for p in after}
+    if len(left)!=len(before) or len(right)!=len(after) or left.keys()!=right.keys():return None
+    return [(p,right[key(p)]) for p in before]
 
 
 def normalized_vertices(points, closed=False):
@@ -32,6 +63,7 @@ def normalized_vertices(points, closed=False):
 
 def canonical_object(o):
     data = o.semantic()
+    if o.mpp:data['mpp']['parts']=_ordered_parts(data['mpp']['parts'])
     if "connections" in data["attributes"]:
         data["attributes"]["connections"] = sorted(
             data["attributes"]["connections"] or [],
@@ -162,12 +194,13 @@ def guard_readback_semantic(expected,actual,want):
     remain strict. Preconditions still use canonical_object without this rule.
     """
     if not expected.mpp or not actual.mpp or not actual.observed_net:return want
-    parts=want['mpp']['parts'];actual_parts=actual.mpp.parts
-    if len(parts)!=len(actual_parts):return want
-    for before,after in zip(parts,actual_parts):
+    parts=want['mpp']['parts'];pairs=_part_pairs(parts,actual.mpp.parts)
+    if pairs is None:return want
+    for before,after in pairs:
         if (before.get('net_name') is None and after.get('net_name')==actual.observed_net
                 and before.get('terminal_name') is None):
             before['net_name']=after['net_name']
+    want['mpp']['parts']=_ordered_parts(parts)
     return want
 
 
@@ -185,7 +218,9 @@ def guard_net_enrichment_proven(workspace, expected, actual, profile, graphs):
         return False
     metals={row['layer'] for row in profile.layers if row.get('material')=='metal'}
     cuts={row['layer'] for row in profile.layers if row.get('material')=='cut'}
-    changed=[a for a,b in zip(expected.mpp.parts,actual.mpp.parts)
+    pairs=_part_pairs(expected.mpp.parts,actual.mpp.parts)
+    if pairs is None:return False
+    changed=[a for a,b in pairs
              if a.get('net_name')!=b.get('net_name')]
     if not changed or any(not p.get('lpp') or p['lpp'][0] not in metals|cuts for p in changed):
         return False

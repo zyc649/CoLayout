@@ -22,6 +22,7 @@ from .sync_checks import (
     normalized_vertices as normalized_vertices,
     canonical_object as canonical_object,
     require_unchanged,
+    same_snapshot,
     verify,
 )
 
@@ -520,7 +521,7 @@ class Adapter:
                     }
                 )
             elif receipt.status == "rolled_back":
-                if after.semantic() != w.baseline.semantic():
+                if not same_snapshot(after,w.baseline):
                     raise LiteError("ROLLBACK_MISMATCH")
                 result = w.model_copy(
                     update={
@@ -616,7 +617,7 @@ class Adapter:
                     },
                 }
             )
-        elif actual.semantic() == w.baseline.semantic():
+        elif same_snapshot(actual,w.baseline):
             result = w.model_copy(
                 update={
                     "baseline": actual,
