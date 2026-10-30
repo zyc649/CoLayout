@@ -11,15 +11,15 @@ DRC_IMPLEMENTATION = 'local-geometry-v1'
 
 
 class Rule(Record):
-    id:str
-    kind:Literal['width','spacing','area','enclosure']
+    id:str=Field(description='Local rule identifier, not a selector for a foundry rule or its conditions.')
+    kind:Literal['width','spacing','area','enclosure']=Field(description='Geometric check. spacing does not distinguish same-net/different-net geometry or compare net names. Enabled spacing rules on the same layer all apply; different thresholds are not conditional branches.')
     layer:str
     other_layer:str|None=None
     value:float
     enabled:bool=True
     severity:Literal['error','warning']='error'
-    note:str=''
-    source:str=''
+    note:str=Field(default='',description='Description only: state the actual local check, omitted conditions and possible false positives/missed cases. Does not execute conditions or exclusions.')
+    source:str=Field(default='',description='Evidence from the selected PDK/rule deck; does not execute or import the referenced rule.')
     @model_validator(mode='after')
     def valid(self):
         if not isfinite(self.value) or self.value<=0:raise ValueError('Rule threshold must be finite and positive')

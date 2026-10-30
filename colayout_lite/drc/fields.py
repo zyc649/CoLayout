@@ -28,12 +28,13 @@ class DrcFields:
         from .mim_fields import MimFields
         self.mim_fields=MimFields();layout.addWidget(self.mim_fields)
         layout.addWidget(QLabel('单位：µm（面积为 µm²）。阈值须来自实际规则，不是默认画线宽度。'))
-        self.rules=QTableWidget(0,len(self.columns));self.rules.setHorizontalHeaderLabels(['规则 ID','类型','检查层','包围层','阈值','启用','级别','条件/局限','规则来源']);layout.addWidget(self.rules,1)
+        note=QLabel('间距检查不区分同网/异网，也不比较网络名称。同层多条间距规则会同时执行，并非条件分支。\n规则 ID、说明和来源不参与条件判断；在检查覆盖范围内，满足全部间距规则须达到最大启用阈值。');note.setWordWrap(True);layout.addWidget(note)
+        self.rules=QTableWidget(0,len(self.columns));self.rules.setHorizontalHeaderLabels(['规则 ID','类型','检查层','包围层','阈值','启用','级别','说明/局限','规则来源']);layout.addWidget(self.rules,1)
         self.rules.setItemDelegateForColumn(1,ChoiceDelegate([('线宽','width'),('间距','spacing'),('面积','area'),('包围','enclosure')],self.rules))
         self.rules.setItemDelegateForColumn(5,ChoiceDelegate([('启用','true'),('停用','false')],self.rules))
         self.rules.setItemDelegateForColumn(6,ChoiceDelegate([('工艺错误','error'),('工艺警告','warning')],self.rules))
         self.rule_details=QPlainTextEdit();self.rule_details.setReadOnly(True);self.rule_details.setMaximumHeight(85)
-        self.rule_details.setPlaceholderText('选择规则查看完整条件与来源。');layout.addWidget(self.rule_details)
+        self.rule_details.setPlaceholderText('选择规则查看完整说明与来源；文字不参与条件判断。');layout.addWidget(self.rule_details)
         self.rules.itemSelectionChanged.connect(self.describe_rule);self.rules.itemChanged.connect(lambda _:self.describe_rule())
         self.rules.setToolTip('类型 width / spacing / area / enclosure；启用 true / false；级别 error / warning。')
         row=QHBoxLayout();layout.addLayout(row);add=QPushButton('增加规则');remove=QPushButton('删除所选规则');row.addWidget(add);row.addWidget(remove)
@@ -86,7 +87,7 @@ class DrcFields:
         def text(column):
             item=self.rules.item(row,column)
             return item.text() if item else ''
-        self.rule_details.setPlainText(text(0)+'\n条件：'+text(7)+'\n来源：'+text(8))
+        self.rule_details.setPlainText(text(0)+'\n说明/局限（不参与条件判断）：'+text(7)+'\n来源（仅作依据）：'+text(8))
 
     def value(self):
         rows=[]

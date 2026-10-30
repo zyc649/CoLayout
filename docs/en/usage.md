@@ -39,6 +39,8 @@ Do not change device parameters to hide a mismatch or invent a waiver. If a nati
 
 When reviewing local rules, source/note are evidence and descriptions, not executable regional exceptions or electrical conditions. Useful simplified checks should normally remain enabled even when omitted conditions can cause limited false positives; review the stated simplification and possible missed cases. Disable rules only when evidence is insufficient, the algorithm cannot perform the check, or repeated false positives on legal basic structures would make editing impractical. A note does not implement an omitted condition, and full server DRC remains necessary.
 
+Local `spacing` does not distinguish same-net/different-net geometry or compare net names; a rule ID does not select conditions from the original deck. Enabled spacing rules on the same layer all apply, so satisfying all of them within check coverage requires the largest enabled threshold, not a conditional choice. Configure an evidence-backed simplification for the selected PDK and describe its actual behavior, original evidence and omitted cases; passing configuration checks does not establish the original conditions. Layout agents must not infer extra capabilities from rule names/notes or change process settings to bypass checks.
+
 ## Save, reopen and recovery
 
 The APP automatically maintains its internal working document and recovery records. Explicit Save / Save As creates or updates the user's portable JSON archive. Later editing does not continuously rewrite that archive.

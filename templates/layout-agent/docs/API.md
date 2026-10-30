@@ -19,6 +19,7 @@ Useful conventions:
 - Native guard paths/rings are available only from approved sampled capabilities. Double rows cannot be inferred from a single-row sample.
 - The internal-metal contact design warning flags possible accidental contact with a leaf device's non-PIN metal; it is advice, not an LVS verdict.
 - Cross-device Poly conflicts and configured MIM-region via errors are local physical checks and are not waived by server report filters.
+- Local `spacing` is geometric: it does not distinguish same-net/different-net geometry or compare net names. Enabled spacing rules on the same layer all apply; rule IDs, notes and sources do not implement conditional branches. Read the approved simplification and omitted cases, retain server checks, and report configuration concerns to the setup role instead of changing rules to bypass failures.
 - Server report filtering follows the human-approved process policy. `include_waived=true` shows preserved filtered records without altering passed.
 - Unknown outcome: retain pending and use the same request ID/body. `queued/running` is not success; inspect current/passed/completion_eligible/coverage.
 - A port returning connection refused is a maintenance issue. Do not scan for another service or connect directly to Virtuoso.
