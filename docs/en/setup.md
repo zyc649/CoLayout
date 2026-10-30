@@ -46,11 +46,11 @@ Start-CoLayout.cmd opens an initially empty, unconfigured local workspace. A pro
 .\.venv\Scripts\python.exe -m colayout_lite.bootstrap connect --window "<returned-CIW-ID>"
 ```
 
-Replace the example host, user and directory. An unspecified directory may first be discovered and verified read-only; ask when several candidates remain or verification disagrees, rather than guessing a broad filesystem root. An existing Bridge environment may be selected explicitly with `configure --existing-env <file> --remote-root <project>`; it is not overwritten. Multiple environments for one host also require port, forwarding-target and runtime-identity checks in the [runbook](agent-setup.md).
+Replace the example host, user and directory. An unspecified directory may first be discovered and verified read-only; ask when several candidates remain or verification disagrees, rather than guessing a broad filesystem root. Both configure paths create a project-owned .env, Bridge runtime under .colayout/bridge-runtime, a unique profile/client ID and a local tunnel port. `configure --existing-env <file> --remote-root <project>` imports verified connection settings (add --profile for a named source profile), preserving the remote daemon endpoint but not sharing the source's local state or modifying its file. It does not import credentials. See the supported fields and port/identity checks in the [runbook](agent-setup.md).
 
 When exactly one CIW is found, connect may omit --window. With multiple CIWs, choose with the user. The helper checks the endpoint's Virtuoso PID against X11 window metadata and checks the connected project. If X11 does not expose the PID, it reports that it cannot prove the binding; complete the checks manually using the upstream tools before proceeding. It never stops another Virtuoso process to take its port.
 
-Bridge allocates its default ports; explicit port/profile changes and advanced jump/split-host setups follow the upstream documentation. Keep each independent native session's endpoint unambiguous.
+connect defaults to reusing a running Bridge daemon without loading setup into CIW. Only for a verified first Bridge load, use `connect --window "<returned-CIW-ID>" --bootstrap`. Do not use this flag to work around authentication errors or unknown outcomes. New endpoints use the pinned Bridge's remote-port policy; imported endpoints require their actual remote port. Local port conflicts are handled by Bridge. Different installations may reuse the same server session but must not concurrently write the same native target. Existing installations are not automatically migrated; preserve their active process bindings and work.
 
 | Diagnosis | Next action |
 |---|---|

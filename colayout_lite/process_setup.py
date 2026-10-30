@@ -22,9 +22,9 @@ def inspect_live(env_file):
     if not Path(env_file).resolve().is_file():
         raise LiteError('BRIDGE_ENV_MISSING','Run the repository connection setup before inspecting Virtuoso.')
     from virtuoso_bridge import VirtuosoClient
-    from virtuoso_bridge.env import set_runtime_env_file
+    from .bridge_environment import select_environment
     from .sexpr import parse_native
-    set_runtime_env_file(Path(env_file).resolve());client=VirtuosoClient.from_env()
+    select_environment(env_file);client=VirtuosoClient.from_env()
     code='list(getWorkingDir() foreach(mapcar w hiGetWindowList() if(w!=hiGetCIWindow() && geGetWindowCellView(w) && geGetWindowCellView(w)~>viewName=="layout" then let((cv) cv=geGetWindowCellView(w) list(cv~>libName cv~>cellName dbFullLibPath(cv~>libName) techGetTechFile(cv)~>libName cv~>modifiedButNotSaved)) else nil)))'
     result=client.execute_skill(code)
     if result.errors:raise LiteError('BRIDGE_INSPECT_FAILED',str(result.errors))

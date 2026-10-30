@@ -7,7 +7,7 @@ description: Configure CoLayout process libraries by directly collecting Virtuos
 
 用户提供样例，配置 Agent 直接采集并核对几何复现，再通过公开 HTTP API 提交。只有人端“工艺库 → 待审核 → 审核并启用”能启用配置。不要直接写正式配置、调用发布函数或替用户点击批准。
 
-先加载项目级 `virtuoso` skill。复用现有 Bridge 环境和目标 Virtuoso；不重启进程、不改共享 PDK、不清原生身份或 pending 来绕过失败。配置 Agent 可运行本 skill 的专用采集/副本检查器；普通绘图 Agent 仍只使用区域 API。
+先加载项目级 `virtuoso` skill。使用本安装已核对的项目独立 Bridge 环境/状态目录，复用目标服务器的 Virtuoso 会话；新安装按初始化手册导入已有连接参数，不沿用另一安装的本地状态。不重启进程、不改共享 PDK、不清原生身份或 pending 来绕过失败。配置 Agent 可运行本 skill 的专用采集/副本检查器；普通绘图 Agent 仍只使用区域 API。
 
 ## 入口
 

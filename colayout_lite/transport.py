@@ -13,7 +13,6 @@ import time
 from uuid import uuid4
 
 from virtuoso_bridge import VirtuosoClient
-from virtuoso_bridge.env import set_runtime_env_file
 
 from .model import LiteError
 from .transactions import write_json_atomic
@@ -104,7 +103,8 @@ class NativeTransport:
         from .streams import resilient
         sys.stdout=resilient(sys.stdout,self.state/'pythonw.log')
         sys.stderr=resilient(sys.stderr,self.state/'pythonw-errors.log')
-        set_runtime_env_file(env_path)
+        from .bridge_environment import select_environment
+        select_environment(env_path)
         self.note('正在连接 Virtuoso…')
         started=time.perf_counter()
         self.client = VirtuosoClient.from_env(log_to_ciw=False)

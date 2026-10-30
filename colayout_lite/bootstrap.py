@@ -74,7 +74,7 @@ def status():
     return client().call('workspace', {'action': 'status'}, wait_seconds=0, _http_timeout=4)
 
 
-def configure(host=None, user=None, remote_root=None, existing_env=None, replace=False):
+def configure(host=None, user=None, remote_root=None, existing_env=None, replace=False, profile=None):
     initialize()
     from .document import load_document
     workspace,_ = load_document(settings()['document'])
@@ -87,29 +87,22 @@ def configure(host=None, user=None, remote_root=None, existing_env=None, replace
         raise LiteError('REMOTE_ROOT_REQUIRED', 'Provide an absolute, dedicated server project directory.')
     if any(c in remote_root for c in ('\n', '\r', '\0')):
         raise LiteError('INVALID_REMOTE_ROOT')
-    target = Path(existing_env).expanduser().resolve() if existing_env else ROOT / '.env'
-    if existing_env:
-        if not target.is_file():
-            raise LiteError('BRIDGE_ENV_MISSING', str(target))
-    else:
-        if target.exists() and not replace:
-            raise LiteError('CONNECTION_EXISTS', 'Existing .env preserved. Review it or explicitly use --replace while the APP is closed.')
-        if not host:
-            raise LiteError('SERVER_HOST_REQUIRED', 'Ask the user for the server IP/hostname / 请提供服务器地址。')
-        if not user:
-            raise LiteError('SSH_USER_REQUIRED', 'Ask the user for the remote SSH username.')
-        if not re.fullmatch(r'[A-Za-z0-9_.:-]+', host) or host.startswith('-') or not re.fullmatch(r'[A-Za-z0-9_.-]+', user) or user.startswith('-'):
-            raise LiteError('INVALID_SSH_TARGET')
-        # This file contains connection settings, never a password or private key.
-        from .model import digest
-        values = {'VB_REMOTE_HOST': host, 'VB_REMOTE_USER': user,
-            'VB_HOME': (ROOT / '.colayout/bridge-runtime').as_posix(),
-            'VB_CLIENT_ID': 'colayout-' + digest(str(ROOT))[:12]}
-        from .transactions import write_text_atomic
-        write_text_atomic(target, '\n'.join(k+'='+json.dumps(v, ensure_ascii=False) for k,v in values.items())+'\n')
+    target = ROOT / '.env'
+    if target.exists() and not replace:
+        raise LiteError('CONNECTION_EXISTS', 'Existing project .env preserved. Review it or explicitly use --replace while the APP is closed.')
+    if existing_env and Path(existing_env).expanduser().resolve()==target.resolve():
+        raise LiteError('BRIDGE_ENV_IS_OUTPUT', 'Use a separate source file; --existing-env never overwrites its source.')
+    if existing_env and (host or user):
+        raise LiteError('CONFLICTING_SSH_TARGET', 'Use either --existing-env or --host/--user.')
+    from .bridge_environment import project_environment
+    values = project_environment(ROOT,host=host,user=user,source=existing_env,profile=profile)
+    from .transactions import write_text_atomic
+    write_text_atomic(target, '\n'.join(k+'='+json.dumps(v, ensure_ascii=False) for k,v in values.items())+'\n')
     cfg.update(bridge_env=str(target), allowed_remote_root=remote_root)
     write_json_atomic(connection, cfg)
-    return {'configured': True, 'environment': str(target), 'next': 'Run doctor, then connect with the selected CIW.'}
+    return {'configured': True, 'environment': str(target), 'bridge_home':values['VB_HOME'],
+            'profile':values['VB_PROFILE'], 'source_environment':str(Path(existing_env).resolve()) if existing_env else None,
+            'next': 'Run doctor, then connect to reuse the selected CIW. Use --bootstrap only for a CIW that needs its first Bridge load.'}
 
 
 def environment():
@@ -178,7 +171,7 @@ def windows():
     raise LiteError('BRIDGE_WINDOW_LIST_UNAVAILABLE', 'Inspect the Bridge CLI output; no CIW list was returned.')
 
 
-def connect(window=None):
+def connect(window=None, bootstrap=False):
     choices = windows()
     if not choices:
         raise LiteError('VIRTUOSO_NOT_OPEN', 'Open Virtuoso and the saved Layout sample on the server.')
@@ -189,7 +182,9 @@ def connect(window=None):
     if not selected:
         raise LiteError('VIRTUOSO_WINDOW_UNKNOWN', 'Refresh the window list and select a returned CIW ID.')
     bridge(['start'])
-    bridge(['bootstrap', '--window', selected['window_id']], timeout=60)
+    # Reuse is read-only at the CIW. Loading setup is a separate opt-in and is
+    # never an automatic recovery for authentication failures or unknown results.
+    if bootstrap:bridge(['bootstrap', '--window', selected['window_id']], timeout=60)
     cfg, env_file, *_ = environment()
     from .process_setup import inspect_live
     native, live = inspect_live(env_file)
@@ -220,15 +215,18 @@ def main():
     for name in ('init', 'doctor', 'windows', 'status'): sub.add_parser(name)
     p = sub.add_parser('configure')
     p.add_argument('--host'); p.add_argument('--user'); p.add_argument('--remote-root', required=True)
-    p.add_argument('--existing-env', type=Path); p.add_argument('--replace', action='store_true')
+    p.add_argument('--existing-env', type=Path, help='Read connection settings into a project-owned .env; source and runtime state are not copied.')
+    p.add_argument('--profile', help='Named profile to import from --existing-env.')
+    p.add_argument('--replace', action='store_true')
     p = sub.add_parser('connect'); p.add_argument('--window')
+    p.add_argument('--bootstrap', action='store_true', help='Explicit first Bridge load into the selected CIW; omit when reusing a running session.')
     args = parser.parse_args()
     try:
         if args.command=='init': result=initialize()
-        elif args.command=='configure': result=configure(args.host,args.user,args.remote_root,args.existing_env,args.replace)
+        elif args.command=='configure': result=configure(args.host,args.user,args.remote_root,args.existing_env,args.replace,args.profile)
         elif args.command=='doctor': result=doctor()
         elif args.command=='windows': result={'windows':windows()}
-        elif args.command=='connect': result=connect(args.window)
+        elif args.command=='connect': result=connect(args.window,args.bootstrap)
         else: result=status()
         print(json.dumps(result, ensure_ascii=False, indent=2))
         return 2 if result.get('code')=='VIRTUOSO_SELECTION_REQUIRED' else 0

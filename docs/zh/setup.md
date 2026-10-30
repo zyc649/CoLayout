@@ -46,11 +46,11 @@ Start-CoLayout.cmd 会打开空白、尚未配置工艺的工作区。
 .\.venv\Scripts\python.exe -m colayout_lite.bootstrap connect --window "<实际返回的CIW编号>"
 ```
 
-替换示例主机、用户名和工程目录。未给目录时允许先只读发现并核对；有多个合理候选或验证不一致时再询问，不能用一个宽泛根目录代替。已有 Bridge 环境可通过 configure --existing-env 明确选择，不会覆盖原环境文件；同主机的多份环境还需核对端口、转发目标和运行身份，见[执行手册](agent-setup.md)。
+替换示例主机、用户名和工程目录。未给目录时允许先只读发现并核对；有多个合理候选或验证不一致时再询问，不能用一个宽泛根目录代替。两种 configure 方式都生成项目独立 .env、.colayout/bridge-runtime 运行目录、独立 profile/client ID 和本地隧道端口。`configure --existing-env <文件> --remote-root <工程>` 导入核实过的连接参数（命名来源 profile 加 --profile），保留服务器 daemon 目标，不共享来源的本地状态，也不改来源文件或导入凭据。支持字段和端口/身份核对见[执行手册](agent-setup.md)。
 
 只有一个 CIW 时可省略 --window；多个窗口必须让用户选择。工具会核对 Bridge 端点对应的 Virtuoso PID、X11 窗口 PID 和工程目录。如果服务器没有提供窗口 PID，会明确报告无法证明绑定关系，需用上游工具进一步人工核实，不会默认为成功，也不会停止其他 Virtuoso 抢占端口。
 
-端口使用 Bridge 的默认分配机制。多实例、跳板机和分离主机等高级连接按上游文档配置独立端口／profile，不能混淆会话。
+connect 默认复用正在运行的 Bridge daemon，不向 CIW 加载 setup。只有确认需要首次加载 Bridge 时，才使用 `connect --window "<实际返回的CIW编号>" --bootstrap`；不能用它绕过认证失败或结果未知。新目标采用固定版本 Bridge 的远程端口策略；导入已有目标必须提供实际远程端口。本地端口冲突由 Bridge 处理。不同安装可以复用服务器会话，但不能同时写同一原生目标。已有安装不会自动迁移，须保留实际工艺连接绑定与工作记录。
 
 | 提示 | 处理 |
 |---|---|

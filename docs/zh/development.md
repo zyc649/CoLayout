@@ -50,7 +50,7 @@ Start-CoLayout.cmd 委托 tools/project.ps1 启动。源码采用 editable 安�
 1. 在新的 checkout 运行 setup.ps1，由它生成自己的 .venv、.colayout、config 下的运行配置和 artifacts。不要从正式安装复制这些运行目录、工作区历史或 pending；仓库自带的配置示例正常保留。
 2. 先运行 tools/check_environment.py；读取本 checkout 的 .colayout/installation.json，核对 app_root、python_executable、document、test_kit 和 workspace_archive_root。客户端通常是 checkout 旁的独立目录，不是应用源码目录。
 3. 离线验证优先使用公开 pytest 或 smoke_layout_client.py --out <新目录>；空白初始化验证用 smoke_onboarding.py。它们的适用范围见本页，不要拿正式文档作为 smoke 输入。
-4. 需要原生验证时，另按初始化手册核对连接，并明确使用已授权测试副本。可复用匹配的共享 Bridge 环境/VB_HOME，但不会因此获得跨安装的共享写锁，不能让两个安装同时写同一原生目标。
+4. 需要原生验证时，另按初始化手册核对连接，并明确使用已授权测试副本。将核实过的连接目标导入项目独立 Bridge 配置/状态；复用服务器 daemon/会话，不沿用另一安装的 VB_HOME。不会因此获得跨安装共享写锁，不能让两个安装同时写同一原生目标。
 5. 启动后用本 checkout 的 bootstrap status 核对文档 ID、revision、archive_folder，并核对进程命令行中的 --installation 指针。两个 APP 标题可能相似，不能只凭标题认定正式/开发环境。连接描述、日志和归档均归各自安装；测试结束正常关闭对应窗口并保留诊断证据。
 
 ## 按变更类型验收

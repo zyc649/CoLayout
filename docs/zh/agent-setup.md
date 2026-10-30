@@ -36,7 +36,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\setup.ps1
 .\.venv\Scripts\python.exe -X utf8 -m colayout_lite.bootstrap connect --window "<实际返回的CIW编号>"
 ~~~
 
-这些是占位符，不是默认值。已有 .env 保留，明确审核后才替换。复用已知环境时改用 configure --existing-env "<文件>" --remote-root "<工程>"，保留其 VB_HOME/会话，不另建冲突连接。
+这些是占位符，不是默认值。两种 configure 方式都生成当前 checkout 的 .env，Bridge 状态统一放在 .colayout/bridge-runtime，并生成独立 profile/client ID 和新的本地隧道端口。运行目录覆盖项也归本项目所有；独立 profile 避免回退读取另一安装的旧式 state.json。已有项目 .env 保留，仅在 APP 关闭且明确审核 --replace 后替换。
+
+复用已核实的服务器会话时，运行 `configure --existing-env "<来源文件>" --remote-root "<工程>"`；命名 profile 加 `--profile <来源profile>`，或采用来源文件明确的 VB_PROFILE。只导入白名单中的字面连接参数：主机角色、SSH 用户/跳板机、已核实的 daemon 远程端口、暂存根目录、SSH 后端/会话上限及 Cadence/Spectre 路径。不改来源文件，不复制其本地端口、运行路径/状态、token、私钥或认证绕过设置。不猜 profile；缺少远程端口直接报错。拒绝环境变量插值，需明确填写实际值。SSH 代理 URL 等其他高级设置不自动导入，应另行核对，优先使用用户的 SSH 配置。连接前检查生成的 .env。
+
+`connect` 建立本安装的本地隧道，核对现有 CIW 的 PID/工程，不向 CIW 加载 setup。若已确认所选 CIW 从未加载 Bridge，才明确执行 `connect --window "<CIW编号>" --bootstrap`。认证失败、会话阻塞或结果未知都不证明需要首次加载，不以 --bootstrap 重试。复用 daemon 不会获得跨安装共享写锁。
 
 doctor 应返回 ssh_ready。有多个 CIW 时让用户选择实际返回的窗口，不默认选第一个。connect 必须返回 connected=true，且 PID、工程均符合目标。VIRTUOSO_IDENTITY_UNAVAILABLE 或 INSTANCE_MISMATCH 不是成功。端口/profile 的复杂情况按上游 skill 处理，不杀掉或重置用户的 Virtuoso。SSH 认证在对话外配置，不索要密码或私钥。
 
@@ -52,7 +56,7 @@ ssh -G layout-server.example.com | Select-String '^(user|hostname|port) '
 
 工程目录可以在所选服务器上只读查找：列出已运行的 Virtuoso 进程（例如 ps -C virtuoso -o pid=,comm=），再对实际观察到的数字 PID 读取 /proc/<PID>/cwd。多进程或不同工程时向用户确认，不自动选第一个。进程工作目录只是候选证据，后续仍须核对 CIW、Bridge 实际 PID 和 inspect 返回的工作目录。
 
-已存在且匹配目标的 Bridge 环境应明确用 --existing-env 复用，沿用其 VB_HOME 和会话。不要为一次验证启动竞争服务或重置原生身份。没有配置或资料时明确补问；这些信息不能由工艺名称推导。
+用 --existing-env 将核实过的连接目标导入项目独立配置；保留的是服务器 daemon 和 Virtuoso 会话，不是另一安装的本地 VB_HOME。新隧道可使用不同本地端口，但应指向相同且已核实的远程端口。不为一次验证重启共享 daemon 或重置原生身份。没有配置或资料时明确补问；这些信息不能由工艺名称推导。
 
 ### 同一服务器有多份 Bridge 配置时
 
@@ -69,6 +73,8 @@ ssh -G layout-server.example.com | Select-String '^(user|hostname|port) '
 只查看必要连接字段和相关进程信息，不输出整份 .env、token 或状态文件。可按已安装上游技能，用显式 --env（及需要的 profile）查看 status；它能提供现有会话的诊断证据，但不能替代目标核对。
 
 发现端口不一致时，先对照隧道、daemon/CIW 日志和候选配置，定位一致的组合，再执行正常连接验证。证据仍不明确就询问用户。工具输出中的 stop/restart 建议不是切换共享会话的授权；不能为了试配置而停止他人的连接或重置身份。
+
+已有安装不能对着设计重跑 configure。获准修复连接时，先保留备份与 pending，准备项目独立环境并核对同一 daemon/PID/工程，再更新初始化连接和实际使用的已批准工艺连接文件。当前工作区可能绑定 config/connections，而不是 config/colayout_lite.json。等待空闲并正常关闭/重启 APP，释放缓存客户端，再发布版图客户端连接。不得批量改写历史提案/回执或重置原生状态。这是明确执行的维护迁移，不随更新代码自动发生。
 
 ## 3. 启动 APP 并确认就绪
 

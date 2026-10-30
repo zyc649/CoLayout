@@ -71,6 +71,111 @@ def test_connection_checks_selected_process_and_project(installation,monkeypatch
     if expected:
         with pytest.raises(LiteError,match=expected):bootstrap.connect('0x1')
     else:assert bootstrap.connect('0x1')['virtuoso_pid']==12
+    assert calls==[['start']] # Reuse never injects setup into an existing CIW.
+
+
+def test_existing_environment_import_is_project_owned_and_preserves_source(installation,tmp_path):
+    from dotenv import dotenv_values
+    source=tmp_path/'shared.env'
+    source.write_text('VB_REMOTE_HOST=layout-server.example.com\nVB_REMOTE_USER=designer\n'
+        'VB_REMOTE_PORT=65432\nVB_LOCAL_PORT=65433\nVB_HOME=/shared/runtime\n'
+        'VB_STATE_DIR=/shared/state\nVB_CLIENT_ID=someone-else\n'
+        'VB_DAEMON_TOKEN=private-value\nVB_ALLOW_UNAUTHENTICATED_DAEMON=1\n')
+    before=source.read_bytes()
+    result=bootstrap.configure(existing_env=source,remote_root='/workspace/design')
+    values=dotenv_values(result['environment'])
+    assert Path(result['environment'])==installation/'.env'
+    assert source.read_bytes()==before
+    assert values['VB_REMOTE_PORT']=='65432'
+    assert Path(values['VB_HOME'])==installation/'.colayout/bridge-runtime'
+    assert Path(values['VB_STATE_DIR']).is_relative_to(installation)
+    assert values['VB_CLIENT_ID']!='someone-else'
+    assert values['VB_REMOTE_PORT_'+values['VB_PROFILE']]=='65432'
+    assert 'private-value' not in (installation/'.env').read_text()
+    assert 'VB_ALLOW_UNAUTHENTICATED_DAEMON' not in values
+    assert not (installation/'.colayout/bridge-runtime').exists() # No copied state.
+    cfg=json.loads((installation/'config/colayout_lite.json').read_text())
+    assert Path(cfg['bridge_env'])==installation/'.env'
+    with pytest.raises(LiteError,match='CONNECTION_EXISTS'):
+        bootstrap.configure(existing_env=source,remote_root='/workspace/design')
+    assert source.read_bytes()==before
+
+
+def test_two_installations_have_distinct_state_and_legacy_profile_names(tmp_path,monkeypatch):
+    from colayout_lite.bridge_environment import project_environment,select_environment
+    from virtuoso_bridge import env
+    from virtuoso_bridge.profile import resolve_profile
+    from virtuoso_bridge.transport.tunnel import SSHClient
+    from virtuoso_bridge.transport import tunnel
+    first=project_environment(tmp_path/'one',host='layout-server.example.com',user='designer')
+    second=project_environment(tmp_path/'two',host='layout-server.example.com',user='designer')
+    assert first['VB_PROFILE']!=second['VB_PROFILE']
+    assert first['VB_HOME']!=second['VB_HOME']
+    assert first['VB_CLIENT_ID']!=second['VB_CLIENT_ID']
+    global_state=tmp_path/'legacy';global_state.mkdir()
+    (global_state/'state.json').write_text('{"mode":"local","port":9999}')
+    monkeypatch.setattr(tunnel,'legacy_cache_state_file',lambda profile=None:
+        global_state/(f'state_{profile}.json' if profile else 'state.json'))
+    monkeypatch.setattr(env,'_RUNTIME_ENV_FILE',None)
+    for key in second:monkeypatch.setenv(key,'ambient-value')
+    path=tmp_path/'project.env'
+    path.write_text('\n'.join(k+'='+json.dumps(v) for k,v in second.items()))
+    select_environment(path)
+    assert resolve_profile()==second['VB_PROFILE']
+    assert SSHClient.read_state(resolve_profile()) is None
+    assert json.loads((global_state/'state.json').read_text())['port']==9999
+
+
+def test_explicit_source_profile_preserves_split_hosts_without_other_profiles(installation,tmp_path):
+    from dotenv import dotenv_values
+    source=tmp_path/'profiles.env'
+    source.write_text('VB_GUI_HOST=unrelated.example.com\nVB_REMOTE_USER=other\n'
+        'VB_REMOTE_HOST_lab=compute.example.com\nVB_GUI_HOST_lab=gui.example.com\n'
+        'VB_DEPLOY_HOST_lab=deploy.example.com\nVB_REMOTE_USER_lab=designer\n'
+        'VB_REMOTE_PORT_lab=65432\nVB_JUMP_HOST_lab=bastion.example.com\n'
+        'VB_REMOTE_SCRATCH_ROOT=/shared/scratch\nVB_REMOTE_HOST_other=other.example.com\n')
+    result=bootstrap.configure(existing_env=source,profile='lab',remote_root='/workspace/design')
+    values=dotenv_values(result['environment'])
+    assert values['VB_GUI_HOST']=='gui.example.com'
+    assert values['VB_REMOTE_HOST']=='compute.example.com'
+    assert values['VB_DEPLOY_HOST']=='deploy.example.com'
+    assert values['VB_JUMP_HOST']=='bastion.example.com'
+    assert values['VB_REMOTE_SCRATCH_ROOT']=='/shared/scratch'
+    assert values['VB_REMOTE_USER']=='designer'
+    assert 'VB_REMOTE_HOST_other' not in values and 'VB_REMOTE_HOST_lab' not in values
+
+
+@pytest.mark.parametrize('body,profile,code',[
+    ('VB_REMOTE_HOST_lab=host\n',None,'BRIDGE_PROFILE_REQUIRED'),
+    ('VB_REMOTE_HOST=host\nVB_REMOTE_USER=user\n',None,'BRIDGE_REMOTE_PORT_REQUIRED'),
+    ('VB_REMOTE_HOST=host\nVB_REMOTE_USER=user\nVB_REMOTE_PORT=bad\n',None,'INVALID_BRIDGE_PORT'),
+    ('VB_REMOTE_HOST=${OTHER_HOST}\nVB_REMOTE_USER=user\nVB_REMOTE_PORT=65432\n',None,'INVALID_BRIDGE_SETTING'),
+    ('VB_REMOTE_HOST_lab=host\n','missing','BRIDGE_PROFILE_UNKNOWN')])
+def test_import_rejects_ambiguous_or_incomplete_target(installation,tmp_path,body,profile,code):
+    source=tmp_path/'source.env';source.write_text(body)
+    with pytest.raises(LiteError,match=code):
+        bootstrap.configure(existing_env=source,profile=profile,remote_root='/workspace/design')
+    assert not (installation/'.env').exists() and source.read_text()==body
+
+
+def test_reuse_failure_never_bootstraps_or_restarts(installation,monkeypatch):
+    bootstrap.configure('layout-server.example.com','designer','/workspace/design')
+    monkeypatch.setattr(bootstrap,'windows',lambda:[{'window_id':'0x1'}])
+    calls=[];monkeypatch.setattr(bootstrap,'bridge',lambda args,**k:calls.append(args))
+    def failed(_):raise LiteError('BRIDGE_INSPECT_FAILED','Authentication failure or unknown native outcome')
+    monkeypatch.setattr('colayout_lite.process_setup.inspect_live',failed)
+    with pytest.raises(LiteError,match='BRIDGE_INSPECT_FAILED'):bootstrap.connect('0x1')
+    assert calls==[['start']]
+
+
+def test_first_ciw_load_requires_explicit_bootstrap(installation,monkeypatch):
+    bootstrap.configure('layout-server.example.com','designer','/workspace/design')
+    monkeypatch.setattr(bootstrap,'windows',lambda:[{'window_id':'0x1'}])
+    calls=[];monkeypatch.setattr(bootstrap,'bridge',lambda args,**k:calls.append(args))
+    native=SimpleNamespace(get_virtuoso_pid=lambda:12,ssh_runner=SimpleNamespace(
+        run_command=lambda *a,**k:SimpleNamespace(stdout='_NET_WM_PID(CARDINAL) = 12')))
+    monkeypatch.setattr('colayout_lite.process_setup.inspect_live',lambda _:(native,{'working_directory':'/workspace/design'}))
+    assert bootstrap.connect('0x1',bootstrap=True)['connected']
     assert calls==[['start'],['bootstrap','--window','0x1']]
 
 

@@ -36,7 +36,11 @@ Use the supplied or verified host and SSH user. Prefer a user-supplied project d
 .\.venv\Scripts\python.exe -X utf8 -m colayout_lite.bootstrap connect --window "<returned-CIW-ID>"
 ~~~
 
-These are placeholders, not defaults. Existing .env is preserved unless an explicit reviewed replacement is requested. To reuse a known environment, use configure --existing-env "<file>" --remote-root "<project>" instead; preserve its VB_HOME/session rather than creating a competing connection.
+These are placeholders, not defaults. Both configure paths generate this checkout's .env and keep Bridge state under .colayout/bridge-runtime, with a unique profile/client ID and a new local tunnel port. Runtime directory overrides are also project-owned; the unique profile prevents fallback to another installation's legacy state.json. Existing project .env is preserved unless --replace is explicitly reviewed while the APP is closed.
+
+To reuse a verified server-side session, run `configure --existing-env "<source-file>" --remote-root "<project>"`, adding `--profile <source-profile>` for a named profile (or using its explicit VB_PROFILE). This imports literal allowlisted connection fields: host roles, SSH user/jump host, the verified remote daemon port, scratch root, SSH backend/session limit and Cadence/Spectre paths. It never writes the source file or copies its local port, runtime paths/state, tokens, private keys or authentication bypasses. Source profiles are not guessed; a missing remote port is an error. Environment-variable interpolation is rejected; resolve intended values explicitly. Other advanced settings such as SSH proxy URLs are not imported: review them separately, preferably through the user's SSH configuration. Inspect the generated .env before connecting.
+
+`connect` starts this installation's tunnel and verifies the existing CIW PID/project without loading setup into CIW. If the selected CIW has never loaded Bridge, verify that it needs a first load, then explicitly use `connect --window "<CIW-ID>" --bootstrap`. Authentication errors, a blocked session or unknown outcomes are not first-load evidence; do not retry them with --bootstrap. Reusing a daemon does not create a cross-installation write lock.
 
 doctor must report ssh_ready. With several CIWs, ask which returned window to use; do not bootstrap the first one. connect must report connected=true with the intended PID and project. VIRTUOSO_IDENTITY_UNAVAILABLE or INSTANCE_MISMATCH is not success. Resolve advanced ports/profiles through the upstream skill without killing/resetting the user's Virtuoso. Missing SSH authentication must be fixed outside the chat; do not ask for passwords/private keys.
 
@@ -52,7 +56,7 @@ The resolved user can merely be the local default. Verify it with one ordinary B
 
 Discover project candidates read-only on the selected server: list running Virtuoso processes (for example ps -C virtuoso -o pid=,comm=), then read /proc/<PID>/cwd for an observed numeric PID. Ask when several processes/projects are plausible. The process cwd is only candidate evidence; still verify the selected CIW, actual Bridge PID and working directory returned by inspect.
 
-Explicitly reuse a matching existing Bridge environment with --existing-env, preserving its VB_HOME/session. Do not create a competing service or reset native identity for a test. Ask for unresolved information rather than deriving it from a process-library name.
+Use --existing-env to import a verified endpoint into project-owned settings; preserve the existing server daemon and Virtuoso session, not another installation's local VB_HOME. The new local tunnel may use a different local port while targeting the same verified remote port. Do not restart the shared daemon or reset native identity for a test. Ask for unresolved information rather than deriving it from a process-library name.
 
 ### Several Bridge configurations for the same server
 
@@ -69,6 +73,8 @@ Matching host and SSH user establishes only a candidate. Compare the following l
 Read only necessary connection fields and relevant process details; do not dump complete .env files, tokens or state files. Follow the installed upstream skill to inspect status with explicit --env and, when needed, profile. Status provides existing-session evidence, not a substitute for target verification.
 
 For a port mismatch, compare the tunnel, daemon/CIW logs and candidate configurations first, then verify the consistent choice through the normal connection flow. Ask if ambiguity remains. A tool's stop/restart suggestion does not authorize switching a shared session; do not stop another connection or reset identity merely to try a configuration.
+
+For an existing installation, do not rerun configure over a design. During an authorized connection repair, preserve backups and pending outcomes, prepare and verify a project-owned environment against the same daemon/PID/project, then rebind both the setup connection and the actual active/approved-process connection files that reference the old environment. The active workspace may use config/connections rather than config/colayout_lite.json. Wait for idle work and close/restart the APP normally to release cached clients; republish the layout-client connection. Never bulk-rewrite historical proposals/receipts or reset native state. This is an explicit maintenance migration, not an automatic effect of updating code.
 
 ## 3. Start the APP and inspect readiness
 
