@@ -174,6 +174,7 @@ def usage(name, actions):
         result['mim_via_check']='本地检查按人端 drc.mim_capacitor 配置：独立标准过孔（含组合中的每一级）的实际切孔与配置的 MIM 图形重叠，且连接所选上下金属时，报 MIM_VIA_BLOCKED，阻断完成。不检查原生 PCell 内部孔；不改普通连通/高亮。inspect rules 可读配置状态；未配置不是不支持，不得自行猜层或增加豁免。'
         result['verification_workflow']='频繁本地检查 > 阶段性服务器检查，推荐先本地；服务器可独立启动。release(done) 要求当前全区本地与服务器均通过。本地只检查已支持项目；不支持的宽度计算跳过且不生成逐项记录。本地实际错误/Poly/PIN 问题、几何缺失、执行失败、截断、局部或过期结果仍阻断完成。区域结果不是整芯片或 LVS 签核。'
     if name=='route_region':
+        result['permission']='默认关闭，仅人端工艺库勾选“允许 Agent 使用算法自动布线”并保存后开放。关闭时不列入实时 tools，generate/recheck/apply 均拒绝；已有任务仍可 status/discard。其他辅助编辑工具与人类 UI 不受影响。'
         result['size_limit']='最多 64 个当前层器件/直接子模块；超出返回 ROUTING_REGION_TOO_LARGE，可分区或使用显式路径动作。模拟部分不建议内置自动布线。'
     if name=='check_region':
         result['internal_metal_contact']='design.internal_metal_contact 是非阻断设计 warning：本层独立金属接触普通叶器件内部、未与公开 PIN 通过原生同层金属连通的部分。按线/器件/层合并并标出实际接触；合法原生 PIN 同层延伸不报，不展开层次黑盒。检查位置并避免误接；不提取内部电路，不代表 LVS 结论，无须为该提醒添加 waiver。'

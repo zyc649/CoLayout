@@ -203,7 +203,7 @@ TOOLS = {
     ),
     'route_region': (
         Route,
-        '为本区域生成本地布线候选、查询、重检、采用或丢弃。模拟部分不建议使用内置自动布线，数字部分可以考虑。采用后仍须本地及服务器 DRC。generate/recheck/apply 必须给 expected_revision。',
+        '算法自动布线，默认不向 Agent 开放。仅人端工艺库启用后才出现在实时 tools 中并允许 generate/recheck/apply；Agent 无权开启。关闭后已有任务仍可 status/discard。此开关不限制其他编辑辅助工具或人类 UI。采用后仍须本地及服务器 DRC；generate/recheck/apply 必须给 expected_revision。',
     ),
     'check_region': (
         Check,

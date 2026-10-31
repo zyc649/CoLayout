@@ -11,11 +11,12 @@ All coordinates for edit calls are workspace-absolute micrometres unless the too
 7. `capture_region`: scoped screenshots for review. These do not move the human camera.
 8. `release_region`: done requires valid complete-region evidence; handoff preserves intermediate work.
 
-`route_region` exposes optional built-in algorithms; analog layout generally needs more deliberate routing. `reference_cases` manages references, and `workspace` handles explicit snapshots. `process_configuration` is for the separate setup role; ordinary layout agents do not change global process settings.
+`route_region` is disabled by default and absent from live tools until a human enables Agent autorouting in the process UI. Disabled generate/recheck/apply calls fail with AGENT_AUTOROUTE_DISABLED; existing jobs still allow status/discard for cleanup. Agents cannot change this permission, including through process proposals. Human UI routing and all other edit helpers remain available. `inspect rules` reports `agent_autoroute_enabled`; readable routing layer/via data does not grant access. `reference_cases` manages references, and `workspace` handles explicit snapshots. `process_configuration` is for the separate setup role; ordinary layout agents do not change global process settings.
 
 Useful conventions:
 
 - First build the interior with directional PINs where suitable, then tighten the region, select fixed PIN mode and route to real boundary access.
+- Tightening automatically leaves half the largest own/direct-child PIN dimension per axis plus 10% (at least one grid step), rounded outward, around contents and child PIN extents. `padding_um` adds to this margin. It only shrinks inside the original frame, preserves native geometry/PIN mode and does not warn when the original frame is already too tight.
 - Native guard paths/rings are available only from approved sampled capabilities. Double rows cannot be inferred from a single-row sample.
 - The internal-metal contact design warning flags possible accidental contact with a leaf device's non-PIN metal; it is advice, not an LVS verdict.
 - Cross-device Poly conflicts and configured MIM-region via errors are local physical checks and are not waived by server report filters.

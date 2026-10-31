@@ -100,12 +100,20 @@ class FrameEdit:
         if limits is None:raise LiteError('REGION_EMPTY','没有可用于收紧边界的内容。')
         # Direct-child PINs are public access geometry at this level. Keep
         # their outer halves reachable; own boundary PINs move with this box.
-        contents=[limits,*[pin.bbox for child in children(e.w,ident) for pin in child.pins.values()]]
+        child_pins=[pin for child in children(e.w,ident) for pin in child.pins.values()]
+        contents=[limits,*[pin.bbox for pin in child_pins]]
         limits=(tuple(min(b[0][i] for b in contents) for i in (0,1)),
                 tuple(max(b[1][i] for b in contents) for i in (0,1)))
         grid=e.profile.grid
-        bounds=(tuple(max(row.bbox[0][i],floor((limits[0][i]-padding)/grid)*grid) for i in (0,1)),
-                tuple(min(row.bbox[1][i],ceil((limits[1][i]+padding)/grid)*grid) for i in (0,1)))
+        pins=[*row.pins.values(),*child_pins]
+        sizes=[max((p.bbox[1][i]-p.bbox[0][i] for p in pins),default=0) for i in (0,1)]
+        # Own PIN centres stay on the frame. Reserve their inner half plus a
+        # small channel; scale with actual PIN dimensions, never a PDK constant.
+        clearance=[ceil(size/(2*grid))*grid+max(grid,ceil(size/(10*grid))*grid) if size else 0 for size in sizes]
+        desired=(tuple(floor((limits[0][i]-padding-clearance[i])/grid)*grid for i in (0,1)),
+                 tuple(ceil((limits[1][i]+padding+clearance[i])/grid)*grid for i in (0,1)))
+        bounds=(tuple(max(row.bbox[0][i],desired[0][i]) for i in (0,1)),
+                tuple(min(row.bbox[1][i],desired[1][i]) for i in (0,1)))
         if bounds!=row.bbox:
             e.publish(self.candidate(ident,bounds,reflow_pins=True))
         updated=e.w.local_data.regions[ident];scale=e.profile.dbu_per_micron
@@ -113,6 +121,7 @@ class FrameEdit:
                 'previous_bounds_um':[v/scale for p in row.bbox for v in p],
                 'bounds_um':[v/scale for p in updated.bbox for v in p],
                 'changed_pin_ids':[pid for pid,p in row.pins.items() if updated.pins[pid]!=p],
+                'pin_clearance_um':[v/scale for v in clearance],
                 'native_geometry_changed':False,'pin_mode':updated.pin_mode}
 
     def move(self,ident,delta,*,expected_revision=None):

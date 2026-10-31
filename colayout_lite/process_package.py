@@ -1,7 +1,7 @@
 """Portable process data shared by UI, HTTP proposals and file import/export."""
 from typing import Literal
 import re
-from pydantic import Field,model_validator
+from pydantic import Field,StrictBool,model_validator
 from .model import Record,LiteError,digest
 from .technology import TechnologyProfile
 from .drc.models import DrcProfile
@@ -15,6 +15,8 @@ class ProcessPackage(Record):
     report_policy:WaiverPolicy|None=None
     notes:str=Field(default='',max_length=20000)
     sample_evidence:dict=Field(default_factory=dict)
+    agent_autoroute_enabled:StrictBool=Field(default=False,exclude_if=lambda v:not v,
+        description='Human UI permission for route_region only. Default false, including legacy configurations. Agents cannot change this permission; manual helpers and human UI routing remain available.')
 
     @model_validator(mode='after')
     def consistent(self):
@@ -113,6 +115,7 @@ def changes(before,after):
     if before.drc!=after.drc:sections.append('DRC 与设计提醒')
     if (old.guard_templates,old.guard_recipes)!=(new.guard_templates,new.guard_recipes):sections.append('保护环')
     if before.report_policy!=after.report_policy or old.schematic_summary_parameters!=new.schematic_summary_parameters:sections.append('摘要与报告')
+    if before.agent_autoroute_enabled!=after.agent_autoroute_enabled:sections.append('Agent 自动布线权限')
     text='变更：'+('、'.join(sections) if sections else '名称、说明或验证信息')
     from .mpp_recipe import available,native_templates
     def capabilities(profile):

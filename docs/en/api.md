@@ -19,7 +19,7 @@ POST /call with Authorization: Bearer <local-token> and a JSON object containing
 }
 ```
 
-The special tools discovery call returns current schemas; it is not one of the eleven product tools. The live schema takes precedence over a copied document. MCP is not a supported transport.
+The special tools discovery call returns currently available schemas and is not a product tool. Ten tools are available by default; human process settings can additionally enable route_region. The static schema lists all possible tools; live discovery and permission checks take precedence. MCP is not a supported transport.
 
 ## Tools
 
@@ -31,13 +31,17 @@ The special tools discovery call returns current schemas; it is not one of the e
 | claim_region | Exclusive ownership of one construction level |
 | inspect_region | Scoped layout, rules, connectivity and schematic-reference projections |
 | edit_region | Validated edit batches, including supported frames, PINs, guards and routing windows |
-| route_region | Optional algorithm jobs; deliberate routing is generally preferable for analog work |
+| route_region | Algorithm autorouting, disabled by default until enabled in the human process UI |
 | check_region | Local supported DRC/connectivity jobs |
 | capture_region | Scoped read-only images, independent of the human view |
 | server_drc_region | Scoped server checks and result queries |
 | release_region | Release/handoff or evidence-validated completion |
 
 The API intentionally does not expose arbitrary Python/SKILL, direct Bridge access, arbitrary source import/sync, native PCell internals or human process approval.
+
+The process editor's drawing/layers page has an unchecked-by-default “允许 Agent 使用算法自动布线” option; legacy configurations also default to disabled. It gates only route_region: disabled tools disappear from live discovery and generate/recheck/apply return AGENT_AUTOROUTE_DISABLED. Existing jobs may still use status/discard, and original idempotent receipts remain valid. Human UI autorouting and Agent arrange/align/auto-via/multilayer-path helpers remain available. inspect_region(kind=rules) reports agent_autoroute_enabled; routing layer/via data remains readable but is not permission. process_configuration.submit cannot change the flag: omission preserves the human choice, changes return AGENT_PERMISSION_UI_ONLY. Imported shared configurations default to disabled until a local human enables and saves them.
+
+edit_region tighten_region/tighten_child_region share the human tightening implementation. Around contents and direct-child PIN extents, each axis reserves half the largest own/direct-child PIN dimension plus 10% (at least one manufacturing grid step), rounded outward. padding_um adds extra clearance; pin_clearance_um reports the automatic margin. Tightening only shrinks within the original frame, preserves native geometry and PIN mode, and adds no insufficient-margin warning for an already tight frame.
 
 ## Identity, revision and jobs
 

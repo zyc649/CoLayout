@@ -52,6 +52,8 @@ class AgentHub(QObject):
             remote_enabled=lambda: getattr(window, 'remote_enabled', True),
             workspace_files=self.workspace_files,
             process_configuration=self.process_configuration,
+            autoroute_enabled=lambda:self.process_configuration.agent_autoroute_enabled(
+                window.editor.profile if window.editor else None),
         )
         self.dispatcher = QtDispatcher(self.runtime.invoke, self, audit=self.runtime.audit.emit,invoke_async=self.runtime.invoke_async)
         self.server = AgentHTTPServer(self.dispatcher, self.connection_file)

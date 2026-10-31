@@ -144,6 +144,7 @@ def local_settings_review(service,package,source,connection):
     changed=sorted(name for name in local_fields if getattr(current.drc,name)!=getattr(package.drc,name))
     changed+=['report_policy'] if current.report_policy!=package.report_policy else []
     changed+=['notes'] if current.notes!=package.notes else []
+    changed+=['agent_autoroute_enabled'] if current.agent_autoroute_enabled!=package.agent_autoroute_enabled else []
     if not changed:return None # An explicit unchanged requalification still checks its sample.
     return {'version':VALIDATION_VERSION,'status':'passed','kind':'reviewed_local_settings',
             'configuration_key':package.technology.key,'previous_configuration_digest':current.fingerprint(),

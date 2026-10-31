@@ -16,7 +16,7 @@ def probe(path):
     client = AgentClient(path)
     result = client.call('tools', {}, wait_seconds=0, _http_timeout=3)
     names = sorted(item['name'] for item in result['tools'])
-    if names != sorted(TOOLS):
+    if names not in (sorted(TOOLS),sorted(set(TOOLS)-{'route_region'})):
         raise RuntimeError('Running APP tool contract differs from the installed source.')
     if path.read_bytes() != original:
         raise RuntimeError('APP service identity changed during probe; retry publication.')

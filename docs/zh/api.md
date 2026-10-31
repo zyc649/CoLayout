@@ -19,7 +19,7 @@ APP 在 127.0.0.1 提供带身份验证的 HTTP 服务，将当前 URL/token 发
 }
 ```
 
-特殊的 tools 调用返回当前 schema，不计入下面的 11 个业务工具。运行中的接口契约优先于文档副本。目前不支持 MCP 通信。
+特殊的 tools 调用返回当前可用工具的 schema，不计入下面的业务工具。默认开放 10 项；人端工艺设置启用算法自动布线后再开放 route_region。静态 schema 列出全部可能工具，运行中的接口发现及权限检查优先。目前不支持 MCP 通信。
 
 ## 工具
 
@@ -31,13 +31,17 @@ APP 在 127.0.0.1 提供带身份验证的 HTTP 服务，将当前 URL/token 发
 | claim_region | 独占一个操作层 |
 | inspect_region | 查询本区域的版图、规则、连通和原理图参考 |
 | edit_region | 校验后采用编辑批次，包含受支持的边界、PIN、保护环和局部布线豁免 |
-| route_region | 可选算法任务；模拟版图通常更适合有针对性的布线 |
+| route_region | 默认关闭，仅人在工艺库启用后开放的算法自动布线 |
 | check_region | 本地受支持 DRC 与连通检查任务 |
 | capture_region | 区域只读截图，不改变人的视角 |
 | server_drc_region | 服务器区域检查与结果查询 |
 | release_region | 释放/阶段交接，或在证据通过后标记完成 |
 
 API 不开放任意 Python/SKILL、直接 Bridge 访问、任意原生导入/同步、PCell 内部编辑或人端工艺批准。
+
+工艺库“绘图与图层”页的“允许 Agent 使用算法自动布线”默认不勾选，旧配置也按关闭处理。该权限只限制 route_region：关闭时不列入实时 tools，generate/recheck/apply 返回 AGENT_AUTOROUTE_DISABLED；已启动任务仍可 status/discard，原请求的幂等回执保留。人类 UI 自动布线以及 Agent 的排列、对齐、自动过孔、多层路径等工具不受影响。inspect_region(kind=rules) 返回 agent_autoroute_enabled；routing 层/孔参数仍可读取，但不代表授权。process_configuration.submit 无权改变权限，省略字段时保留人端选择，尝试改变返回 AGENT_PERMISSION_UI_ONLY。共享配置导入后默认关闭，须由本机人端勾选并审核保存。
+
+edit_region 的 tighten_region/tighten_child_region 与人端“收紧操作区”共用几何逻辑：按内容及直接子区 PIN 外形收紧，各轴自动预留自身/直接子区最大 PIN 尺寸的一半，再加 10%（至少一个制造网格），向外取整。padding_um 为额外叠加余量；返回 pin_clearance_um 为自动余量。仅在原框内收缩，不移动原生几何，不改变 PIN 模式，也不对已经过紧的原框额外提示余量不足。
 
 ## 身份、版本和任务
 

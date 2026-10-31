@@ -27,6 +27,9 @@ class ConfigurationEditor(QWidget):
         self.tabs=QTabWidget();box.addWidget(self.tabs)
         basic=QWidget();form=QFormLayout(basic)
         self.name=QLineEdit();form.addRow('工艺名称',self.name)
+        self.agent_autoroute=QCheckBox('允许 Agent 使用算法自动布线')
+        self.agent_autoroute.setToolTip('默认关闭。仅控制 Agent 的 route_region 接口；人类 UI 自动布线及其他 Agent 编辑、排列、对齐、过孔工具不受影响。')
+        form.addRow(self.agent_autoroute)
         self.identity=QLabel();self.identity.setWordWrap(True);form.addRow(self.identity)
         self.stack=QLineEdit();self.stack.setPlaceholderText('实际金属层名，按从低到高排列，逗号分隔');form.addRow('金属层次',self.stack)
         self.width=QDoubleSpinBox();self.width.setDecimals(6);self.width.setRange(.000001,10000);self.width.setSuffix(' µm')
@@ -65,6 +68,7 @@ class ConfigurationEditor(QWidget):
 
     def set_package(self,package):
         self.original=package;p=package.technology
+        self.agent_autoroute.setChecked(package.agent_autoroute_enabled)
         self.name.setText(p.label);self.identity.setText(f'原生技术库：{p.native_technology_name or "旧配置未记录"} · 网格 {p.grid/p.dbu_per_micron:g} µm · {p.dbu_per_micron} DBU/µm\n配置标识：{p.key}')
         try:stack=metal_stack(p,p.editor_defaults.get('metal_stack'))
         except Exception:stack=p.editor_defaults.get('metal_stack',[])
@@ -171,4 +175,5 @@ class ConfigurationEditor(QWidget):
             keywords=tuple(s.strip() for s in self.report_keywords.toPlainText().splitlines() if s.strip()))
         drc=None if self.original.drc is None and not self.drc.rules.rowCount() and not self.drc.enabled.isChecked() else self.drc.value()
         return self.original.model_copy(update={'technology':p,'drc':drc,
-            'report_policy':report,'notes':self.notes.toPlainText()})
+            'report_policy':report,'notes':self.notes.toPlainText(),
+            'agent_autoroute_enabled':self.agent_autoroute.isChecked()})

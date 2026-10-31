@@ -77,7 +77,8 @@ def main():
     parser.add_argument('--out',type=Path,required=True,help='New output folder, never an existing workspace')
     args=parser.parse_args();out=args.out.resolve()
     out.mkdir(parents=True,exist_ok=False)
-    from PySide6.QtCore import QEventLoop,QTimer
+    from PySide6.QtCore import QEventLoop,QTimer,Qt,QPoint
+    from PySide6.QtTest import QTest
     from PySide6.QtWidgets import QApplication
     from colayout_lite import app_identity
     from colayout_lite.document import save_document
@@ -113,7 +114,7 @@ def main():
             write_json_atomic(connection,{'schema_version':'colayout-lite-connection-1',
                 'bridge_env':str(out/'no-native.env'),'allowed_remote_root':'/synthetic',
                 'state_directory':str(out/'native'),'profiles_directory':str(out/'profiles'),
-                'default_library':'fixture','default_source_cell':'client'})
+                'default_library':'fixture','default_source_cell':'client','preferred_profile':profile.id})
             workspace=workspace.model_copy(update={'connection_config':str(connection)})
             document=out/'fixture.colayout.json';save_document(document,workspace,profile)
             rules.save(out/'config/drc'/f'{profile.key}.json')
@@ -130,6 +131,8 @@ def main():
             window.setWindowTitle('CoLayout · synthetic client verification')
             window.resize(1100,700);window.show()
             hub=enable(window);connection_file=hub.connection_file
+            profile_path=out/'profiles/profile.json';profile.save(profile_path)
+            window.process_store.register(profile,profile_path,connection,confirmed=True)
             with (patch.object(generator,'settings',lambda:json.loads(pointer.read_text(encoding='utf8'))),
                   patch.object(generator,'installation_path',lambda:pointer),
                   patch.object(generator,'client',lambda:AgentClient(connection_file))):
@@ -157,17 +160,32 @@ def main():
                 creationflags=subprocess.CREATE_NO_WINDOW if os.name=='nt' else 0))
             assert service.returncode==0,service.stderr
             tools=work(lambda:cli('left','tools'))['result']['tools']
-            assert len(tools)==11 and all(t.get('description') for t in tools)
+            assert len(tools)==10 and all(t.get('description') for t in tools) and 'route_region' not in {t['name'] for t in tools}
+            from colayout_lite.process_center import ProcessDialog
+            dialog=ProcessDialog(window.process_store,window,current_key=profile.key)
+            dialog.show();wait(dialog.isVisible)
+            checkbox=dialog.saved_editor.agent_autoroute
+            assert not checkbox.isChecked()
+            for enabled in (True,False):
+                QTest.mouseClick(checkbox,Qt.MouseButton.LeftButton,pos=QPoint(8,checkbox.height()//2))
+                QTest.mouseClick(dialog.save_settings_button,Qt.MouseButton.LeftButton)
+                assert not dialog.busy and hub.process_configuration.agent_autoroute_enabled(profile)==enabled,dialog.log.toPlainText()
+                available=work(lambda:cli('left','tools'))['result']['tools']
+                assert ('route_region' in {t['name'] for t in available})==enabled
+            dialog.grab().save(str(out/'human-autoroute-permission.png'))
+            dialog.close();dialog.deleteLater()
+            report['steps'].append('human checkbox saves permission; live HTTP discovery follows enable/disable')
             work(lambda:cli('left','tools','--tool','edit_region','--action','create_path90'))
             for name,region in zip(('left','right'),regions):
                 work(lambda n=name,r=region:cli(n,'claim',r,'--name','Synthetic '+n))
                 for kind in ('layout','rules','reference'):
                     work(lambda n=name,k=kind:cli(n,'inspect',k))
-            report['steps'].append('service, 11 tools, edit parameters, claims and scoped inspections')
+            report['steps'].append('service, 10 default tools, edit parameters, claims and scoped inspections')
             observed=work(lambda:cli('left','inspect','net'))
             before=observed['result']
             assert not before['complete'] and before['total_nets']==1
             rev=observed['revision']
+            invoke('left','route_region',{'expected_revision':rev},'AGENT_AUTOROUTE_DISABLED')
             invoke('left','edit_region',{'expected_revision':rev,'operations':[
                 {'action':'move','uid':'C','params':{'dx':1,'dy':0}}]},'OBJECT_OUTSIDE_REGION')
             operations={}
@@ -211,7 +229,7 @@ def main():
             saved=work(lambda:cli('left','workspace','save','--name','verified-synthetic'))
             report['steps'].append('local checks, PNG capture, archive save and handoff; false done blocked without server evidence')
             assert not window.editor.work_sessions.snapshots()
-            report.update(status='passed',tools=11,server_drc_tested=False,real_pdk_tested=False,
+            report.update(status='passed',tools=10,server_drc_tested=False,real_pdk_tested=False,
                           client_folder=str(folder),saved_archive=saved['result'])
         except Exception:
             report.update(status='failed',error=traceback.format_exc())

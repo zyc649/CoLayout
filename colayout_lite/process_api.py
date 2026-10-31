@@ -34,5 +34,6 @@ def invoke(service,args,client_id,request_id):
     if args.action=='export':return service.export(args.technology_key)
     if args.action=='submit':
         return service.submit(args.package,args.sample,client_id=client_id,request_id=request_id,
-                              connection_id=args.connection_id,project_root=args.project_root,verification_id=args.verification_id)
+                              connection_id=args.connection_id,project_root=args.project_root,verification_id=args.verification_id,
+                              agent_submission=True)
     raise LiteError('UNKNOWN_PROCESS_ACTION')

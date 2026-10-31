@@ -61,7 +61,7 @@ def build_geometry(panel, form):
     row.addWidget(panel.enter)
     row.addWidget(panel.resize)
     panel.tighten = _button('收紧操作区', 'studioTightenRegion', panel.tighten_region)
-    panel.tighten.setToolTip('按已有内容收紧外框，保留 PIN 和模式；可撤销。')
+    panel.tighten.setToolTip('按内容收紧，按 PIN 半宽再加少量余量预留走线空间；不扩张原框，保留 PIN 和模式，可撤销。')
     row.addWidget(panel.tighten)
     form.addWidget(panel.frame_actions)
     panel.rect_size = QWidget()

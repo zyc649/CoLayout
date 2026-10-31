@@ -237,6 +237,8 @@ class ProcessDialog(DarkDialog):
         if not path:return
         try:
             package=decode(json.loads(Path(path).read_text(encoding='utf8')))
+            # A shared package does not grant this installation's Agent access.
+            package=package.model_copy(update={'agent_autoroute_enabled':False})
             from .process_binding import BindingDialog
             dialog=BindingDialog(self.service,package.technology,self)
             self.busy=True

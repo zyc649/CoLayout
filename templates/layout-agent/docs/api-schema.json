@@ -2604,7 +2604,7 @@
             "properties": {
               "padding_um": {
                 "default": 0,
-                "description": "Content margin in µm; only shrinks, never expands the existing frame.",
+                "description": "Extra margin in µm, added to automatic PIN clearance: half the largest own/direct-child PIN dimension per axis plus 10% (at least one grid step), rounded outward. Only shrinks within the original frame. Native geometry and PIN mode are preserved.",
                 "minimum": 0,
                 "title": "Padding Um",
                 "type": "number"
@@ -3007,7 +3007,7 @@
             "properties": {
               "padding_um": {
                 "default": 0,
-                "description": "Content margin in µm; only shrinks, never expands the existing frame.",
+                "description": "Extra margin in µm, added to automatic PIN clearance: half the largest own/direct-child PIN dimension per axis plus 10% (at least one grid step), rounded outward. Only shrinks within the original frame. Native geometry and PIN mode are preserved.",
                 "minimum": 0,
                 "title": "Padding Um",
                 "type": "number"
@@ -3173,7 +3173,7 @@
   },
   {
     "name": "route_region",
-    "description": "为本区域生成本地布线候选、查询、重检、采用或丢弃。模拟部分不建议使用内置自动布线，数字部分可以考虑。采用后仍须本地及服务器 DRC。generate/recheck/apply 必须给 expected_revision。",
+    "description": "算法自动布线，默认不向 Agent 开放。仅人端工艺库启用后才出现在实时 tools 中并允许 generate/recheck/apply；Agent 无权开启。关闭后已有任务仍可 status/discard。此开关不限制其他编辑辅助工具或人类 UI。采用后仍须本地及服务器 DRC；generate/recheck/apply 必须给 expected_revision。",
     "input_schema": {
       "additionalProperties": false,
       "properties": {
@@ -3300,6 +3300,7 @@
         "historical_result": "stale evidence; cannot authorize completion"
       },
       "recovery": "结果未知时沿用同 client_id/request_id 与原参数重试；不要换 ID 重画。STALE_REVISION 应重新查询。",
+      "permission": "默认关闭，仅人端工艺库勾选“允许 Agent 使用算法自动布线”并保存后开放。关闭时不列入实时 tools，generate/recheck/apply 均拒绝；已有任务仍可 status/discard。其他辅助编辑工具与人类 UI 不受影响。",
       "size_limit": "最多 64 个当前层器件/直接子模块；超出返回 ROUTING_REGION_TOO_LARGE，可分区或使用显式路径动作。模拟部分不建议内置自动布线。"
     }
   },

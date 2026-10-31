@@ -18,7 +18,8 @@ from . import inspection
 
 class AgentSession:
     def __init__(self, editor, drc, folder, *, save=None, capture=None, busy=lambda: False,
-                 references=None, remote_enabled=lambda: True, workspace_files=None, process_configuration=None):
+                 references=None, remote_enabled=lambda: True, workspace_files=None, process_configuration=None,
+                 autoroute_enabled=lambda: False):
         self.editor_source = editor if callable(editor) else lambda: editor
         self.drc_source = drc if callable(drc) else lambda: drc
         self.folder = Path(folder)
@@ -30,6 +31,7 @@ class AgentSession:
         self.remote_enabled = remote_enabled
         self.workspace_files = workspace_files
         self.process_configuration = process_configuration
+        self.autoroute_enabled = autoroute_enabled
         self.thread = get_ident()
         self.closed = False
         self.audit_failure = None
@@ -98,7 +100,9 @@ class AgentSession:
         try:
             if tool == 'tools':
                 from .discovery import select_tools
-                result = {'schema_version': 'colayout-agent-api-2', 'tools': select_tools(describe_tools(),args)}
+                tools=describe_tools()
+                if not self.autoroute_enabled():tools=[row for row in tools if row['name']!='route_region']
+                result = {'schema_version': 'colayout-agent-api-2', 'tools': select_tools(tools,args)}
             else:
                 if tool not in TOOLS:
                     raise LiteError('UNKNOWN_TOOL', '只支持 Agent API v2 的区域工具。')
@@ -227,7 +231,7 @@ class AgentSession:
             raise LiteError('INVALID_ARGUMENTS', 'detail/uids/pin_ids 仅用于 layout 查询。')
         if args.kind == 'rules':
             if args.bounds_um is not None or args.layers is not None or args.target or args.include_members or args.net is not None:raise LiteError('INVALID_ARGUMENTS','范围、图层和分量参数不用于 rules。')
-            return inspection.rules(e.profile, self.drc_source())
+            return inspection.rules(e.profile, self.drc_source(),autoroute_enabled=self.autoroute_enabled())
         return inspection.net(e.w, e.profile, rid, args.net,target=args.target,include_members=args.include_members,bounds_um=args.bounds_um,layers=args.layers)
 
     def saved(self, result):
@@ -290,6 +294,10 @@ class AgentSession:
         return self.saved(result)
 
     def route_region(self, lease, args):
+        # Status/discard remain available for already-started jobs/reconciliation.
+        # Recheck and apply must re-read the permission even for an old candidate.
+        if args.action not in ('status','discard') and not self.autoroute_enabled():
+            raise LiteError('AGENT_AUTOROUTE_DISABLED','此工艺未向 Agent 开放算法自动布线；仅人端工艺库可启用。其他编辑工具仍可用。')
         return self.operations.route_region(lease, args)
 
     def check_region(self, lease, args):

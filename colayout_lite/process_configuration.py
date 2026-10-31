@@ -30,7 +30,16 @@ class ProcessConfiguration:
         return ProcessPackage(technology=p,
             drc=DrcProfile.model_validate_json(dp.read_text(encoding='utf8')) if dp.exists() else None,
             report_policy=WaiverPolicy.model_validate_json(wp.read_text(encoding='utf8')) if wp.exists() else WaiverPolicy(technology_fingerprint=p.native_fingerprint,configuration_id=p.configuration_id),
-            notes=entry.get('notes',''))
+            notes=entry.get('notes',''),agent_autoroute_enabled=entry.get('agent_autoroute_enabled',False))
+
+    def agent_autoroute_enabled(self,profile):
+        """Use human-published settings, never a submitted package/document flag."""
+        if profile is None:return False
+        try:entry=self.store.entries().get(profile.key,{})
+        except (OSError,ValueError,TypeError):return False
+        return (entry.get('confirmed') is True and
+                entry.get('native_fingerprint')==profile.native_fingerprint and
+                entry.get('agent_autoroute_enabled') is True)
 
     def connection_choices(self):
         paths={str(Path(e['connection']).resolve()) for e in self.store.entries().values()}
@@ -72,7 +81,7 @@ class ProcessConfiguration:
         if entry:expected[str(Path(entry['profile']).resolve())]=file_key(entry['profile'])
         return expected
 
-    def submit(self,package,sample,*,client_id,request_id,connection_id=None,project_root=None,verification_id=None,imported=False):
+    def submit(self,package,sample,*,client_id,request_id,connection_id=None,project_root=None,verification_id=None,imported=False,agent_submission=False):
         if isinstance(package,ProcessPackage):package=package.model_dump(mode='json')
         request_digest=digest({'package':package,'sample':sample,'connection_id':connection_id,
                                'project_root':project_root,'verification_id':verification_id,'imported':bool(imported)})
@@ -82,7 +91,16 @@ class ProcessConfiguration:
             data=json.loads(path.read_text(encoding='utf8'))
             if data.get('request_digest')!=request_digest:raise LiteError('REQUEST_ID_CONFLICT')
             return data.get('submission_receipt',self.summary(path,data))
-        package=ProcessPackage.model_validate(package).require_complete()
+        original=package
+        package=ProcessPackage.model_validate(package)
+        if agent_submission:
+            enabled=self.agent_autoroute_enabled(package.technology)
+            if 'agent_autoroute_enabled' in original and package.agent_autoroute_enabled!=enabled:
+                raise LiteError('AGENT_PERMISSION_UI_ONLY','算法自动布线权限只能由人在工艺库界面修改。')
+            # Freeze the human choice only after idempotent request lookup.
+            # A retry keeps the original body hash even if that choice changes.
+            package=package.model_copy(update={'agent_autoroute_enabled':enabled})
+        package.require_complete()
         entries=self.store.entries();p=package.technology
         if p.key in entries:
             previous=self.load(p.key).technology
@@ -168,6 +186,7 @@ class ProcessConfiguration:
                         (['local_drc','design_warnings'] if package.drc else [])+
                         (['remote_drc'] if package.drc and package.drc.remote else [])}
         entries[key]['notes']=package.notes
+        entries[key]['agent_autoroute_enabled']=package.agent_autoroute_enabled
         if proposal:entries[key]['configuration_origin']='shared' if proposal.get('imported') else 'sample'
         if proposal and proposal['source']:entries[key]['sample']=proposal['source']
         writes={paths['technology']:p.model_dump(mode='json'),paths['registry']:{'schema_version':'colayout-process-library-1','entries':entries}}

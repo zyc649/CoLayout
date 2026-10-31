@@ -73,7 +73,7 @@ def main():
             tools = work(lambda: client.call('tools', {}, wait_seconds=0))
             status = work(lambda: client.call('workspace', {'action': 'status'}, wait_seconds=0))
             requirements = work(lambda: client.call('process_configuration', {'action': 'requirements'}, wait_seconds=0))
-            assert len(tools['tools']) == 11
+            assert len(tools['tools']) == 10 and 'route_region' not in {t['name'] for t in tools['tools']}
             assert status['active_regions'] == status['pending_operations'] == 0
             folder = Path(cfg['test_kit'])
             result = work(lambda: create(folder, update=(folder/'.colayout-layout-agent.json').exists()))
@@ -83,7 +83,7 @@ def main():
                  '--client', 'onboarding-verification-'+uuid4().hex[:8], 'tools'],
                 capture_output=True, text=True, encoding='utf8', timeout=20))
             assert cli.returncode == 0, cli.stderr
-            assert len(json.loads(cli.stdout)['result']['tools']) == 11
+            assert len(json.loads(cli.stdout)['result']['tools']) == 10
             dialog = ProcessDialog(window.process_store, window)
             dialog.show()
             wait(dialog.isVisible)
@@ -94,7 +94,7 @@ def main():
             dialog.close()
             dialog.deleteLater()
             window.grab().save(str(args.out/'empty-app.png'))
-            report.update(status='passed', tools=11, empty_workspace=True, native_access=False,
+            report.update(status='passed', tools=10, empty_workspace=True, native_access=False,
                           process_connections=len(requirements['connections']),
                           client_ready=True, client_source_isolated=True, qt_tab_click=True,
                           pythonw=Path(sys.executable).stem=='pythonw')

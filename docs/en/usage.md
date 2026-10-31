@@ -29,6 +29,10 @@ Local child operation regions are separate from native hierarchy. Their internal
 
 ## Checks have different meanings
 
+The process editor's drawing/layers page includes “允许 Agent 使用算法自动布线”, disabled by default, including legacy settings. Only a human save/approval enables route_region. Human UI autorouting and other Agent tools such as arrange, align and automatic vias remain available.
+
+Tightening reserves a small channel around contents and direct-child PIN extents: half the largest PIN dimension per axis plus about 10% (at least one manufacturing grid step). Human UI and API share this behavior, preserve PIN mode/native geometry and only shrink within the original frame, without extra warnings for an already tight frame.
+
 - Local connectivity checks exposed targets and supported material connectivity, not the full extracted device circuit.
 - Local DRC includes configured simple geometry, design advice, cross-device Poly conflict checks, configured MIM-region via protection and internal-metal contact advice. Unsupported width geometries are skipped.
 - The internal-metal contact warning is nonblocking advice. Known local physical errors and incomplete/stale/truncated results still prevent completion.

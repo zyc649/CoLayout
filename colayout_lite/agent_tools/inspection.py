@@ -189,7 +189,7 @@ def reference(w, region_id, *, detail='full', uids=None, parameter_names=None, p
     return result
 
 
-def rules(p, drc):
+def rules(p, drc, *, autoroute_enabled=False):
     from .child_regions import contracts as child_contracts
     from ..autoroute.layers import capabilities
     from ..conduction_rules import ConductionRules
@@ -205,8 +205,9 @@ def rules(p, drc):
                   'local_drc': 'value is µm for width/spacing/enclosure, µm² for area',
                   'native_parameters': 'verbatim native values; units are not inferred'},
         'dbu_per_micron': p.dbu_per_micron,
-        'permissions_note': 'writable_lpps 决定编辑权限，routing 决定自动布线能力。conduction 不是可编辑层清单。GT 不供 Agent 编辑或接入，只有金属引出的 Gate PIN 才能继续布线。',
+        'permissions_note': 'writable_lpps 决定编辑权限；agent_autoroute_enabled 决定是否开放 route_region，由人端工艺库设置。其他编辑工具不受该开关影响。conduction 不是可编辑层清单。GT 不供 Agent 编辑或接入，只有金属引出的 Gate PIN 才能继续布线。',
         'writable_lpps': p.writable_lpps,
+        'agent_autoroute_enabled':bool(autoroute_enabled),
         'routing': capabilities(p, drc) if drc else None,
         'local_drc': [r.model_dump(mode='json') for r in drc.rules if r.enabled] if drc else [],
         'mim_capacitor':drc.mim_capacitor.model_dump(mode='json') if drc else None,

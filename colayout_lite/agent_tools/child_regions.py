@@ -32,7 +32,7 @@ class Bounds(Parameters):
 
 
 class Tighten(Parameters):
-    padding_um: float = Field(default=0,ge=0,description='Content margin in µm; only shrinks, never expands the existing frame.')
+    padding_um: float = Field(default=0,ge=0,description='Extra margin in µm, added to automatic PIN clearance: half the largest own/direct-child PIN dimension per axis plus 10% (at least one grid step), rounded outward. Only shrinks within the original frame. Native geometry and PIN mode are preserved.')
 
 
 class PinEscapes(Parameters):
