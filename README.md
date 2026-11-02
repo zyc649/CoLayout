@@ -2,6 +2,16 @@
 
 [简体中文](README.zh-CN.md) | **English** · [Documentation](docs/en/index.md) · [Setup prompt](#setup-prompt) · [Layout-agent prompt](#layout-agent-prompt)
 
+## Video walkthroughs
+
+Three Chinese-language videos recorded by the project author on Bilibili, in viewing order:
+
+1. [01 · Analog layout with AI: introduction and op-amp example](https://www.bilibili.com/video/BV1514w6eEzK/): An overview of the interface and human–agent workflow, followed by an op-amp layout example covering placement, routing, checks and synchronization.
+2. [02 · Environment setup, process configuration and hierarchical design with Virtuoso](https://www.bilibili.com/video/BV1Ly4w6NEEy/): Project initialization, the Virtuoso connection and process samples, followed by native submodules, module and PIN placement, collaborative routing and synchronization, including troubleshooting and adjustments.
+3. [03 · Design ideas behind an AI-assisted analog layout tool](https://www.bilibili.com/video/BV1334w6ZEYm/): Operation regions, the shared workspace, layout data storage, the Agent API and SKILL communication, with design considerations for guard rings, DRC, PIN connectivity and process adaptation.
+
+## About CoLayout
+
 CoLayout is a lightweight Windows layout workspace for human–agent collaboration with Cadence Virtuoso. Humans organize a design into local operation regions; layout agents edit their assigned regions through a loopback HTTP API. The Windows application owns the workspace, permissions, undo history, checks and explicit native synchronization.
 
 CoLayout is a complementary layout tool, not a replacement for foundry sign-off or a full LVS extractor. Cadence Virtuoso, Calibre and PDKs are separate licensed products and are not included.
