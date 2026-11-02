@@ -1,6 +1,6 @@
 # Dependency provenance
 
-[简体中文](../zh/dependencies.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/dependencies.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 CoLayout gratefully acknowledges [Virtuoso Bridge Lite](https://github.com/Arcadia-1/virtuoso-bridge-lite), created by Arcadia-1 and its contributors. It provides the native communication foundation. CoLayout's shared workspace, UI, domain checks and Agent API are maintained separately.
 
@@ -32,4 +32,4 @@ This is a source distribution. Binary installers, wheels bundled with third-part
 
 ---
 
-[简体中文](../zh/dependencies.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/dependencies.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

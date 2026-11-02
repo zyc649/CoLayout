@@ -1,6 +1,6 @@
 # 安全与数据边界 / Security and data boundaries
 
-[简体中文](docs/zh/security.md) | [English](docs/en/security.md) · [中文首页](README.zh-CN.md) · [English home](README.md)
+[简体中文](docs/zh/security.md) | [English](docs/en/security.md) · [中文首页](README.md) · [English home](README.en.md)
 
 请选择阅读语言。 / Choose a language.
 

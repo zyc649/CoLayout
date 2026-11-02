@@ -1,6 +1,6 @@
 # 源码接手指南
 
-**简体中文** | [English](../en/maintainer-guide.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/maintainer-guide.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 拉取仓库后要修复 bug 或修改行为，请从本页开始。接手不需要原作者的私有交接包、旧对话或已有用户文件。本页同时供人工维护者和编码 Agent 使用。
 
@@ -85,4 +85,4 @@ tools/smoke_onboarding.py 仅用于全新空白安装，会主动拒绝已有设
 
 ---
 
-**简体中文** | [English](../en/maintainer-guide.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/maintainer-guide.md) · [项目首页](../../README.md) · [文档目录](index.md)

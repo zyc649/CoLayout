@@ -1,6 +1,6 @@
 # Development
 
-[简体中文](../zh/development.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/development.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 ## Environment and entry points
 
@@ -97,4 +97,4 @@ For parallel regressions, claim independent regions with distinct client IDs, in
 
 ---
 
-[简体中文](../zh/development.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/development.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

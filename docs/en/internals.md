@@ -1,6 +1,6 @@
 # Source implementation guide
 
-[简体中文](../zh/internals.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/internals.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 This complements the [architecture](architecture.md) with actual call chains and change locations. File links open source; names identify symbols rather than frozen line numbers.
 
@@ -146,4 +146,4 @@ A new edit action normally touches its shared command/model, permission/scope ha
 
 ---
 
-[简体中文](../zh/internals.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/internals.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

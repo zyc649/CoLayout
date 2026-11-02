@@ -1,6 +1,6 @@
 # Copyable setup prompt
 
-[简体中文](../zh/setup-prompt.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/setup-prompt.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 Fill in the server, SSH user and process name. Adjust authentication and double-row sample availability to match your setup. See the [sample preparation checklist](setup.md).
 
@@ -15,4 +15,4 @@ The repository defines task order, source-maintenance responsibilities, skills, 
 
 ---
 
-[简体中文](../zh/setup-prompt.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/setup-prompt.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

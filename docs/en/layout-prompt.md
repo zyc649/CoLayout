@@ -1,6 +1,6 @@
 # Prompt for a layout agent
 
-[简体中文](../zh/layout-prompt.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/layout-prompt.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 Open a new conversation in the dedicated client folder created during setup and grant access only to that folder. The prompt needs no server address or SSH/root account.
 
@@ -19,4 +19,4 @@ Checks and completion requirements belong in the client documentation, not a rep
 
 ---
 
-[简体中文](../zh/layout-prompt.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/layout-prompt.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

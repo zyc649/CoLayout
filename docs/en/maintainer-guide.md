@@ -1,6 +1,6 @@
 # Taking over source maintenance
 
-[简体中文](../zh/maintainer-guide.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/maintainer-guide.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 Read this when cloning CoLayout to fix a bug or change behavior. You do not need a private handoff, a previous conversation or an existing user's files. This guide is for human maintainers and coding agents.
 
@@ -85,4 +85,4 @@ Keep both language editions, API/schema, skills and instructions aligned with co
 
 ---
 
-[简体中文](../zh/maintainer-guide.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/maintainer-guide.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

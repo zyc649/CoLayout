@@ -1,6 +1,6 @@
 # 依赖来源 / Dependency provenance
 
-[简体中文](../docs/zh/dependencies.md) | [English](../docs/en/dependencies.md) · [中文首页](../README.zh-CN.md) · [English home](../README.md)
+[简体中文](../docs/zh/dependencies.md) | [English](../docs/en/dependencies.md) · [中文首页](../README.md) · [English home](../README.en.md)
 
 请选择阅读语言。 / Choose a language.
 

@@ -1,6 +1,6 @@
 # 给版图 Agent 的提示词
 
-**简体中文** | [English](../en/layout-prompt.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/layout-prompt.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 在初始化 Agent 建好的专用客户端文件夹中新开对话，只授予该文件夹权限。提示词不用包含服务器地址或 SSH/root 账号。
 
@@ -19,4 +19,4 @@
 
 ---
 
-**简体中文** | [English](../en/layout-prompt.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/layout-prompt.md) · [项目首页](../../README.md) · [文档目录](index.md)

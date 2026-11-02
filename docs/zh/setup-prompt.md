@@ -1,6 +1,6 @@
 # 可复制的初始化提示词
 
-**简体中文** | [English](../en/setup-prompt.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/setup-prompt.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 填写服务器、SSH 用户名和工艺名称即可；免密状态和双排样例情况请按实际修改。样例要求见[准备清单](setup.md)。
 
@@ -15,4 +15,4 @@
 
 ---
 
-**简体中文** | [English](../en/setup-prompt.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/setup-prompt.md) · [项目首页](../../README.md) · [文档目录](index.md)

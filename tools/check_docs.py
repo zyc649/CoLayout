@@ -85,7 +85,7 @@ def check():
     from tools.build_readme_prompts import update
     for filename in update(check=True):
         errors.append(filename+': homepage prompt differs from its guide; run tools/build_readme_prompts.py')
-    locales = {'en': 'README.md', 'zh': 'README.zh-CN.md'}
+    locales = {'zh': 'README.md', 'en': 'README.en.md'}
     pages = {lang: {p.name for p in (ROOT/'docs'/lang).glob('*.md')} for lang in locales}
     if pages['en'] != pages['zh']:
         errors.append('English and Chinese topics do not match.')

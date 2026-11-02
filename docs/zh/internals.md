@@ -1,6 +1,6 @@
 # 源码实现详解
 
-**简体中文** | [English](../en/internals.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/internals.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 本页在[软件架构](architecture.md)之上列出实际调用链和修改入口。文件链接打开源码，使用符号名定位，不依赖固定行号。
 
@@ -146,4 +146,4 @@ commit 核对可提交状态、引用、源/依赖和待提交几何；准备 Tr
 
 ---
 
-**简体中文** | [English](../en/internals.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/internals.md) · [项目首页](../../README.md) · [文档目录](index.md)

@@ -1,6 +1,6 @@
 # Agent 初始化执行手册
 
-**简体中文** | [English](../en/agent-setup.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/agent-setup.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 用于首次部署，不是已有安装的自动修复流程。[准备清单](setup.md)说明用户需要提供的服务器、合法 EDA、已保存样例和规则文件，不能猜测缺失信息。
 
@@ -207,4 +207,4 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\project.ps1 -Action 
 
 ---
 
-**简体中文** | [English](../en/agent-setup.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/agent-setup.md) · [项目首页](../../README.md) · [文档目录](index.md)

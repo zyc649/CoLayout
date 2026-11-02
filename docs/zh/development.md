@@ -1,6 +1,6 @@
 # 开发与验证
 
-**简体中文** | [English](../en/development.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/development.md) · [项目首页](../../README.md) · [文档目录](index.md)
 
 ## 环境与入口
 
@@ -97,4 +97,4 @@ Qt 仅安装 PySide6_Essentials，不安装未使用的 Addons。添加模块前
 
 ---
 
-**简体中文** | [English](../en/development.md) · [项目首页](../../README.zh-CN.md) · [文档目录](index.md)
+**简体中文** | [English](../en/development.md) · [项目首页](../../README.md) · [文档目录](index.md)

@@ -1,6 +1,6 @@
 # CoLayout setup and development
 
-This is the source/maintenance conversation. Start with README.md (or README.zh-CN.md). The separate layout conversation uses only its generated client folder and public APP API.
+This is the source/maintenance conversation. Start with README.md (Chinese, the default homepage) or README.en.md (English). The separate layout conversation uses only its generated client folder and public APP API.
 
 ## Route the task before acting
 

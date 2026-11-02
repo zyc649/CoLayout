@@ -1,6 +1,6 @@
 # Security and data boundaries
 
-[简体中文](../zh/security.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/security.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 CoLayout is a trusted local desktop tool. Its HTTP token authenticates local clients; it is not a hardened multi-tenant service. Keep it bound to loopback. Do not expose it through a public proxy or share agent-connection.json.
 
@@ -16,4 +16,4 @@ No public EDA server, hosted model service or foundry library is provided by thi
 
 ---
 
-[简体中文](../zh/security.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/security.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

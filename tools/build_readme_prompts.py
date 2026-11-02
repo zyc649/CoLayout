@@ -12,7 +12,7 @@ def prompt(language, kind):
 
 def update(check=False):
     changed = []
-    for language, filename in (('en', 'README.md'), ('zh', 'README.zh-CN.md')):
+    for language, filename in (('zh', 'README.md'), ('en', 'README.en.md')):
         path = ROOT/filename
         original = text = path.read_text(encoding='utf8')
         for kind in ('setup', 'layout'):

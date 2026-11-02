@@ -1,6 +1,6 @@
 # 参与开发 / Contributing
 
-[简体中文](docs/zh/contributing.md) | [English](docs/en/contributing.md) · [中文首页](README.zh-CN.md) · [English home](README.md)
+[简体中文](docs/zh/contributing.md) | [English](docs/en/contributing.md) · [中文首页](README.md) · [English home](README.en.md)
 
 请选择阅读语言。 / Choose a language.
 

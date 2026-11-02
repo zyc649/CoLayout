@@ -1,6 +1,6 @@
 # Agent setup runbook
 
-[简体中文](../zh/agent-setup.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/agent-setup.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)
 
 Use this for a fresh deployment, not as an automatic repair for an existing installation. The [preparation checklist](setup.md) explains the user's server, licensed tools, saved sample and rule files. Do not guess missing facts.
 
@@ -207,4 +207,4 @@ The user opens a separate conversation with only the generated folder's permissi
 
 ---
 
-[简体中文](../zh/agent-setup.md) | **English** · [Project home](../../README.md) · [Documentation](index.md)
+[简体中文](../zh/agent-setup.md) | **English** · [Project home](../../README.en.md) · [Documentation](index.md)

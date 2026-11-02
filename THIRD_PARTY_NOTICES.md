@@ -1,6 +1,6 @@
 # 许可与第三方声明 / Licensing and third-party notices
 
-[简体中文](docs/zh/licensing.md) | [English](docs/en/licensing.md) · [中文首页](README.zh-CN.md) · [English home](README.md)
+[简体中文](docs/zh/licensing.md) | [English](docs/en/licensing.md) · [中文首页](README.md) · [English home](README.en.md)
 
 请选择阅读语言。 / Choose a language.
 
