@@ -6,9 +6,9 @@
 
 作者录制的三期中文视频（Bilibili），可按顺序观看：
 
-1. [01 · 和 AI 一起画模拟版图：软件介绍与运放示例](https://www.bilibili.com/video/BV1514w6eEzK/)：介绍软件界面和人机协作方式，用运放版图演示布局、连线、检查及同步流程。
-2. [02 · 环境搭建、工艺配置与 Virtuoso 层次化设计](https://www.bilibili.com/video/BV1Ly4w6NEEy/)：从项目初始化、连接 Virtuoso 和工艺样例配置开始，演示原生子模块、模块与 PIN 安排、Agent 协作连线及同步，并保留排查和调整过程。
-3. [03 · 聊聊 AI 辅助模拟版图工具的设计思路](https://www.bilibili.com/video/BV1334w6ZEYm/)：介绍操作区划分、共享工作区、版图数据保存、Agent API 和 SKILL 通信，以及保护环、DRC、PIN 连通性与工艺适配的设计考虑。
+1. [CoLayout 开源分享 01｜和 AI 一起画模拟版图：软件介绍与运放示例](https://www.bilibili.com/video/BV1514w6eEzK/)：介绍软件界面和人机协作方式，用运放版图演示布局、连线、检查及同步流程。
+2. [CoLayout 开源分享 02｜AI 辅助模拟版图：环境搭建、工艺配置与 Virtuoso 层次化设计](https://www.bilibili.com/video/BV1Ly4w6NEEy/)：从项目初始化、连接 Virtuoso 和工艺样例配置开始，演示原生子模块、模块与 PIN 安排、Agent 协作连线及同步，并保留排查和调整过程。
+3. [CoLayout 开源分享 03｜聊聊 AI 辅助模拟版图工具的设计思路](https://www.bilibili.com/video/BV1334w6ZEYm/)：介绍操作区划分、共享工作区、版图数据保存、Agent API 和 SKILL 通信，以及保护环、DRC、PIN 连通性与工艺适配的设计考虑。
 
 ## 项目简介
 
