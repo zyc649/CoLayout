@@ -13,9 +13,9 @@
 
 ## 项目简介
 
-CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 Cadence Virtuoso 配合使用。人划分本地操作区，版图 Agent 通过本机 HTTP API 编辑被分配的区域；工作区、权限、撤销、检查和显式同步都由 Windows APP 统一管理。
+**CoLayout** 是一款面向模拟/混合信号 IC 设计的**人机协作（Human-in-the-Loop）版图辅助工具**，与 Cadence Virtuoso 配合使用。针对全自动版图流程难以干预、手工版图又包含大量重复连线工作的痛点，CoLayout 提供了可视化的轻量化 Windows 协作画布：由工程师主导器件布局、划定局部操作区并定义接口约束；版图 Agent 通过本机 HTTP API 在指定区域内完成模块内部及顶层连线，并配合基础规则检查进行快速迭代。工作区划分、Agent 权限控制、多步撤销及向 Virtuoso 的显式同步均由 Windows 客户端统一管理。
 
-软件用于辅助版图工作，不代替完整 LVS 或工艺签核。Virtuoso、Calibre 和 PDK 由用户自行合法取得，本仓库不包含这些产品。
+本工具旨在减少工程师重复拉线的工作，让人更专注于核心布局与匹配设计，不代替完整 LVS 或最终工艺签核。运行依赖的 Virtuoso、Calibre 及对应 PDK 由用户自行合法取得，本仓库不包含任何商业软件或工艺文件。
 
 ## 复制提示词开始使用
 
@@ -101,6 +101,10 @@ CoLayout 是面向人和 Agent 协作的轻量化 Windows 版图工作区，与 
 CoLayout 原创代码使用 MIT 协议；依赖保留各自的许可证，见 [MIT 许可证原文（英文）](LICENSE) 和[第三方声明](docs/zh/licensing.md)。不分发私人版图、工艺文件、凭据或开发对话。
 
 特别感谢 **[Arcadia-1 及贡献者开发的 Virtuoso Bridge Lite](https://github.com/Arcadia-1/virtuoso-bridge-lite)**。CoLayout 通过它连接 Virtuoso。安装固定到明确的上游提交，保留一个有说明的 Windows 兼容补丁，不随上游更新而自动升级。详见[依赖来源](docs/zh/dependencies.md)。
+
+## 联系方式
+
+联系邮箱：[1517369129@qq.com](mailto:1517369129@qq.com)
 
 ---
 
