@@ -4,11 +4,12 @@
 
 ## 视频介绍与演示
 
-作者录制的三期中文视频（Bilibili），可按顺序观看：
+作者录制的中文视频（Bilibili），建议先看约 1 分钟的快速演示，再按顺序观看三期完整介绍：
 
-1. [CoLayout 开源分享 01｜和 AI 一起画模拟版图：软件介绍与运放示例](https://www.bilibili.com/video/BV1514w6eEzK/)：介绍软件界面和人机协作方式，用运放版图演示布局、连线、检查及同步流程。
-2. [CoLayout 开源分享 02｜AI 辅助模拟版图：环境搭建、工艺配置与 Virtuoso 层次化设计](https://www.bilibili.com/video/BV1Ly4w6NEEy/)：从项目初始化、连接 Virtuoso 和工艺样例配置开始，演示原生子模块、模块与 PIN 安排、Agent 协作连线及同步，并保留排查和调整过程。
-3. [CoLayout 开源分享 03｜聊聊 AI 辅助模拟版图工具的设计思路](https://www.bilibili.com/video/BV1334w6ZEYm/)：介绍操作区划分、共享工作区、版图数据保存、Agent API 和 SKILL 通信，以及保护环、DRC、PIN 连通性与工艺适配的设计考虑。
+1. [告别纯手动连线！和 AI 一起画模拟版图：1分钟演示运放版图人机协作流程（开源工具 CoLayout）](https://www.bilibili.com/video/BV1FcxR6HE5q/)：约 1 分钟展示运放版图的人机协作：人划定分区布局和接口位置，Agent 完成局部模块及顶层连线，再同步回 Virtuoso 继续编辑。
+2. [CoLayout 开源分享 01｜和 AI 一起画模拟版图：软件介绍与运放示例](https://www.bilibili.com/video/BV1514w6eEzK/)：介绍软件界面和人机协作方式，用运放版图演示布局、连线、检查及同步流程。
+3. [CoLayout 开源分享 02｜AI 辅助模拟版图：环境搭建、工艺配置与 Virtuoso 层次化设计](https://www.bilibili.com/video/BV1Ly4w6NEEy/)：从项目初始化、连接 Virtuoso 和工艺样例配置开始，演示原生子模块、模块与 PIN 安排、Agent 协作连线及同步，并保留排查和调整过程。
+4. [CoLayout 开源分享 03｜聊聊 AI 辅助模拟版图工具的设计思路](https://www.bilibili.com/video/BV1334w6ZEYm/)：介绍操作区划分、共享工作区、版图数据保存、Agent API 和 SKILL 通信，以及保护环、DRC、PIN 连通性与工艺适配的设计考虑。
 
 ## 项目简介
 
